@@ -7,6 +7,7 @@ import primitives.Point;
  * Represents a geometric shape in 3D space.
  * This is an abstract class that defines the basic behavior for all geometries.
  */
+
 public abstract class Geometry {
 
     /**
