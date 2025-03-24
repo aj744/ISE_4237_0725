@@ -6,7 +6,14 @@ import primitives.*;
  * Represents a plane in 3D space, defined by a point and a normal vector.
  */
 public class Plane extends Geometry {
+    /**
+     * the plane's point
+     */
     private final Point point;
+
+    /**
+     * the normal vector to the plane
+     */
     private final Vector normal;
 
     /**

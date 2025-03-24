@@ -8,6 +8,9 @@ import primitives.Vector;
  * Represents a cylinder in 3D space, which extends a tube by adding a height parameter.
  */
 public class Cylinder extends Tube {
+    /**
+     * the tube's height
+     */
     private final double height;
 
     /**
