@@ -58,10 +58,7 @@ public class Vector extends Point {
      * @throws IllegalArgumentException if the scalar is zero
      */
     public Vector scale(double rhs) {
-        if (rhs != 0)
-            return new Vector(this.xyz.scale(rhs));
-        else
-            throw new IllegalArgumentException("Scalar cant be ZERO");
+        return new Vector(this.xyz.scale(rhs));
     }
 
     /**
