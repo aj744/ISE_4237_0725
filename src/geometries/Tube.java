@@ -21,6 +21,7 @@ public class Tube extends RadialGeometry {
     public Tube(double radius, Ray axis) {
         super(radius);
         this.axis = axis;
+
     }
 
     @Override
