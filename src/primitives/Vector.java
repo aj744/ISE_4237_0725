@@ -45,10 +45,7 @@ public class Vector extends Point {
      * @throws IllegalArgumentException if the vectors cancel each other out
      */
     public Vector add(Vector vector) {
-        if (!vector.equals(vector.scale(-1))) // Ensures vectors do not cancel each other out
-            return new Vector(this.xyz.add(vector.xyz));
-        else
-            throw new IllegalArgumentException("Vectors can not be added");
+        return new Vector(this.xyz.add(vector.xyz));
     }
 
     /**
