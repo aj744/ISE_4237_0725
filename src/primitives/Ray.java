@@ -15,6 +15,18 @@ public class Ray {
     private Point point;
 
     /**
+     * get method for direction
+     * @return the direction
+     */
+    public Vector getVector() { return vector; }
+
+    /**
+     * get method for point
+     * @return the base point
+     */
+    public Point getPoint() { return point; }
+
+    /**
      * Constructs a Ray with a given direction vector and starting point.
      * The direction vector is automatically normalized.
      *
