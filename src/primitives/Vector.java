@@ -64,9 +64,15 @@ public class Vector extends Point {
      * @return The dot product result as a double
      */
     public double dotProduct(Vector vector) {
-        return this.xyz.product(vector.xyz).d1() +
+        double result = this.xyz.product(vector.xyz).d1() +
                 this.xyz.product(vector.xyz).d2() +
                 this.xyz.product(vector.xyz).d3();
+        if (result == 0) {
+            throw new IllegalArgumentException("arithmetic vectors");
+        }
+        else {
+            return result;
+        }
     }
 
     /**

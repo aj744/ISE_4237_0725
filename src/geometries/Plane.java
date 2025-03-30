@@ -24,7 +24,7 @@ public class Plane extends Geometry {
      */
     public Plane(Point point, Vector normal) {
         this.point = point;
-        this.normal = normal;
+        this.normal = normal.normalize();
     }
 
     /**
@@ -38,7 +38,7 @@ public class Plane extends Geometry {
      * @param p3 The third point.
      */
     public Plane(Point p1, Point p2, Point p3) {
-        this.normal = p2.subtract(p1).crossProduct(p2.subtract(p3)); // get the notaml with cross product
+        this.normal = p2.subtract(p1).crossProduct(p2.subtract(p3)).normalize(); // get the normal with cross product
         this.point = p2;
     }
 
