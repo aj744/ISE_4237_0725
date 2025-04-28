@@ -6,7 +6,7 @@ package primitives;
 import static primitives.Util.isZero;
 
 /**
- * This class will serve all primitive classes based on three numbers
+ * This class will serve all primitive classes baDsed on three numbers
  * @param  d1 first number
  * @param  d2 first number
  * @param  d3 first number

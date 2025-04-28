@@ -26,7 +26,9 @@ public class Triangle extends Polygon {
 
     @Override
     public List<Point> findIntersections(Ray ray) {
-        return null;
+        final var D = - this.getNormal().dotProduct(this.point.subtract(Point.ZERO));
+        final var t = (-(this.normal.dotProduct(ray.getPoint().subtract(Point.ZERO)) - D)) / this.normal.dotProduct(ray.getVector());
+        return t >= 1 ? null : List.of(ray.getPoint().add(ray.getVector().scale(t)));
     }
 }
 

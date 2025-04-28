@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import geometries.Triangle;
 import primitives.Point;
+import primitives.Ray;
 import primitives.Vector;
 
 import java.util.*;
@@ -38,5 +39,39 @@ public class TriangleTests {
                         || new Vector(-1, 0, 0).equals(triangle.getNormal(new Point(0, 1, 0))),
                 "Triangle normal should be either (1,0,0) or (-1,0,0)"
         );
+    }
+
+    /** a point used in testing */
+    final Point p100 = new Point(1, 0, 0);
+    /** a point used in testing */
+    final Point p001 = new Point(0, 0, 1);
+    /** a vector used in testing */
+    final Vector v010 = new Vector(0, -1, 0);
+    @Test
+    public void testFindIntersections() {
+        final Triangle triangle = new Triangle(List.of(Point.ZERO, p100, p001));
+
+        // ============ Equivalence Partitions Tests ==============
+        // TC01
+        final var exp1 = triangle.findIntersections(new Ray(v010, new Point(0.3, 0, 0.3)));
+        assertNotNull(exp1, "there are intersections");
+        assertEquals(1, exp1.size(), "wrong amount of intersections");
+        assertEquals(List.of(new Point(0.3, 0, 0.3)), exp1, "wrong intersection point");
+
+        // TC02
+        assertNull(triangle.findIntersections(new Ray(v010, new Point(1, 0, 1))), "no intersection point");
+
+        // TC03
+        assertNull(triangle.findIntersections(new Ray(v010, new Point(-1, 0, -1))), "no intersection point");
+
+        // =============== Boundary Values Tests ==================
+        // TC11
+        assertNull(triangle.findIntersections(new Ray(v010, new Point(2,0, 0))), "no intersection point");
+
+        // TC12
+        assertNull(triangle.findIntersections(new Ray(v010, new Point(0.5,0, 0))), "no intersection point");
+
+        // TC13
+        assertNull(triangle.findIntersections(new Ray(v010, p100)), "no intersection point");
     }
 }
