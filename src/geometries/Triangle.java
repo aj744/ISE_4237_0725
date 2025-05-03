@@ -19,13 +19,13 @@ import static primitives.Util.alignZero;
 public class Triangle extends Polygon {
 
     /**
-     * Constructs a triangle using a list of three vertices.
-     *
-     * @param vertices A list containing exactly three points that define the triangle.
-     * @throws IllegalArgumentException if the list does not contain exactly three points.
+     * creates a triangle object for 3 points
+     * @param p1 first point
+     * @param p2 second point
+     * @param p3 third point
      */
     public Triangle(Point p1, Point p2, Point p3) {
-        super((Point) List.of(p1,p2,p3)); // send to DAD ctor the list converted to array of vertices
+        super(p1,p2,p3); // send to DAD ctor the list converted to array of vertices
     }
 
     @Override
