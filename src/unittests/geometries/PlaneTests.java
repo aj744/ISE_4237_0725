@@ -47,10 +47,10 @@ public class PlaneTests {
         final var p122 = new Point(1,0,0);
         // ============ Equivalence Partitions Tests ==============
         // TC01:If there is intersection
-        final var exp1 = plane.findIntersections(new Ray(new Vector(-1,-1,-1) ,p122));
+        final var exp1 = plane.findIntersections(new Ray(new Vector(-1,-1,-1) ,new Point(2, 0, 0)));
         assertNotNull(exp1, "intersections is NULL");
         assertEquals(1, exp1.size() , "The intersection should be 1");
-        assertEquals(exp1 , List.of(new Point(0,1,1) ), "The intersection are not equals");
+        assertEquals(exp1 , List.of(new Point(1,-1,-1) ), "The intersection are not equals");
 
         // TC02:If there is no intersections
         final Vector v111 = new Vector(1, 1, 1);
@@ -72,16 +72,16 @@ public class PlaneTests {
         assertNull(plane.findIntersections(new Ray(v100, p122)), "There is no intersections");
 
         // TC22
-        assertNull(plane.findIntersections(new Ray(v100, p022)), "There is no intersections");
+        assertNull(plane.findIntersections(new Ray(v100, new Point(1, 3, 3))), "There is no intersections");
 
         // TC23
         final var exp2 = plane.findIntersections(new Ray(v100, new Point(-1,-1,-1)));
         assertNotNull(exp2, "intersections is not NULL");
         assertEquals(1, exp2.size() , "The intersection should be 1");
-        assertEquals(exp2 , List.of(new Point(0,-1,-1)) , "The intersection are not equals");
+        assertEquals(exp2 , List.of(new Point(1,-1,-1)) , "The intersection are not equals");
 
         // TC31
-        assertNull(plane.findIntersections(new Ray(v111, p022)), "There is no intersections");
+        assertNull(plane.findIntersections(new Ray(v111, p122)), "There is no intersections");
 
         // TC41
         assertNull(plane.findIntersections(new Ray(v111, Point.ZERO)), "There is no intersections");
