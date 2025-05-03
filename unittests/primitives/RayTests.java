@@ -10,7 +10,7 @@ import primitives.Vector;
 public class RayTests {
     @Test
     public void testGetPoint(){
-        Ray ray = new Ray(new Vector(1, 0, 0), Point.ZERO);
+        Ray ray = new Ray(Point.ZERO, new Vector(1, 0, 0));
         assertEquals(
                 new Point(1, 0, 0),
                 ray.getPoint(1),

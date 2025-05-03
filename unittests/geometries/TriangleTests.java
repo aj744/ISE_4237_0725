@@ -55,25 +55,25 @@ public class TriangleTests {
 
         // ============ Equivalence Partitions Tests ==============
         // TC01
-        final var exp1 = triangle.findIntersections(new Ray(v010, new Point(0.3, 1, 0.3)));
+        final var exp1 = triangle.findIntersections(new Ray(new Point(0.3, 1, 0.3), v010));
         assertNotNull(exp1, "there are intersections");
         assertEquals(1, exp1.size(), "wrong amount of intersections");
         assertEquals(List.of(new Point(0.3, 0, 0.3)), exp1, "wrong intersection point");
 
         // TC02
-        assertNull(triangle.findIntersections(new Ray(v010, new Point(1, 1, 1))), "no intersection point");
+        assertNull(triangle.findIntersections(new Ray(new Point(1, 1, 1), v010)), "no intersection point");
 
         // TC03
-        assertNull(triangle.findIntersections(new Ray(v010, new Point(-1, 1, -1))), "no intersection point");
+        assertNull(triangle.findIntersections(new Ray(new Point(-1, 1, -1), v010)), "no intersection point");
 
         // =============== Boundary Values Tests ==================
         // TC11
-        assertNull(triangle.findIntersections(new Ray(v010, new Point(0,1, 2))), "no intersection point");
+        assertNull(triangle.findIntersections(new Ray(new Point(0,1, 2), v010)), "no intersection point");
 
         // TC12
-        assertNull(triangle.findIntersections(new Ray(v010, new Point(0.5,1, 0))), "no intersection point");
+        assertNull(triangle.findIntersections(new Ray(new Point(0.5,1, 0), v010)), "no intersection point");
 
         // TC13
-        assertNull(triangle.findIntersections(new Ray(v010, p100)), "no intersection point");
+        assertNull(triangle.findIntersections(new Ray(p100, v010)), "no intersection point");
     }
 }

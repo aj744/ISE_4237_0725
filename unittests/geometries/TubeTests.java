@@ -21,7 +21,7 @@ public class TubeTests {
     public void TestGetNormal() {
         // ============ Equivalence Partitions Tests ==============
         // TC01: A point that is not directly aligned with the tube's axis
-        Tube tube = new Tube(1, new Ray(new Vector(1, 0, 0), new Point(0, 0, 0)));
+        Tube tube = new Tube(1, new Ray(new Point(0, 0, 0), new Vector(1, 0, 0)));
 
         // Expected normal is (0, 1, 0)
         assertEquals(

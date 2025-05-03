@@ -5,6 +5,9 @@ package primitives;
  * This class extends {@link Point} but ensures that a vector cannot be the zero vector.
  */
 public class Vector extends Point {
+    public static final Vector AXIS_X = new Vector(1,0,0);
+    public static final Vector AXIS_Y = new Vector(0,1,0);
+    public static final Vector AXIS_Z = new Vector(0, 0,1);
 
     /**
      * Checks if the given {@link Double3} value is zero and throws an exception if it is.

@@ -40,10 +40,10 @@ public class Ray {
      * Constructs a Ray with a given direction vector and starting point.
      * The direction vector is automatically normalized.
      *
+     * @param point  The starting point of the ray
      * @param vector The direction vector of the ray
-     * @param point The starting point of the ray
      */
-    public Ray(Vector vector, Point point) {
+    public Ray(Point point, Vector vector) {
         this.vector = vector.normalize(); // Ensure the direction vector is normalized
         this.head = point;
     }

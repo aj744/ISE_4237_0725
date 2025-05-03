@@ -101,7 +101,7 @@ public class Camera implements Cloneable{
         to = new Vector(0, 0, 0);
     }
 
-    public static void getBuilder() {}
+    public static Builder getBuilder() {return new Builder();}
 
     public Ray constructRay(int nX, int nY, int j, int i) {
         return null;
