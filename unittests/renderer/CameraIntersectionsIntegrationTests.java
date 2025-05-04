@@ -16,9 +16,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class CameraIntersectionsIntegrationTests {
     Camera.Builder cameraBuilder = Camera.getBuilder()
+            .setLocation(Point.ZERO)
             .setResolution(3,3)
             .setVpDistance(1)
-            .setDirection(Vector.AXIS_Y, Vector.AXIS_Z.scale(-1))
+            .setDirection(Vector.AXIS_Z.scale(-1), Vector.AXIS_Y)
             .setVpSize(3,3);
 
     Camera camera = cameraBuilder.build();

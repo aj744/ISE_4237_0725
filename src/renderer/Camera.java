@@ -3,11 +3,9 @@ package renderer;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
-import primitives.Util;
-
-import java.util.MissingResourceException;
 
 import static primitives.Util.alignZero;
+import static primitives.Util.isZero;
 
 public class Camera implements Cloneable{
     public static class Builder {
@@ -18,13 +16,13 @@ public class Camera implements Cloneable{
             return this;
         }
 
-        public Builder setDirection(Vector up, Vector to){
+        public Builder setDirection(Vector to, Vector up){
             if(checkOrthogonal(up,to)){
                 throw new IllegalArgumentException("Up and To must be orthogonal");
             }
             camera.up = up.normalize();
             camera.to = to.normalize();
-            camera.right = camera.up.crossProduct(camera.to).normalize();
+            camera.right = camera.to.crossProduct(camera.up).normalize();
             return this;
         }
 
@@ -35,15 +33,16 @@ public class Camera implements Cloneable{
             }
             camera.to = to.normalize();
             camera.right = to.crossProduct(up).normalize();
+            camera.up = camera.right.crossProduct(camera.to).normalize();
 
             return this;
         }
 
         public Builder setDirection(Point target){
             camera.to = target.subtract(camera.location).normalize();
-            camera.up = new Vector(0, 1, 0);
+            camera.up = Vector.AXIS_Y;
             camera.right = camera.to.crossProduct(camera.up).normalize();
-
+            camera.up = camera.right.crossProduct(camera.to).normalize();
             return this;
         }
 
@@ -79,9 +78,13 @@ public class Camera implements Cloneable{
             if(checkOrthogonal(camera.up,camera.to))
                 throw new IllegalArgumentException("Vectors up and to are not orthogonal");
 
-            camera.right = camera.up.crossProduct(camera.to).normalize();
-
-            return (Camera) this.camera;
+            camera.right = camera.to.crossProduct(camera.up).normalize();
+            try {
+                return (Camera) this.camera.clone();
+            }
+            catch (Exception e){
+                throw new RuntimeException();
+            }
         }
 
         public boolean checkOrthogonal(Vector a, Vector b) {return a.dotProduct(b) != 0 ;}
@@ -101,9 +104,11 @@ public class Camera implements Cloneable{
     public Ray constructRay(int nX, int nY, int j, int i) {
         Ray ray = new Ray(location, to);
         Point Pc = ray.getPoint(distance);
-        Point Pij = Pc.subtract(Point.ZERO)
-                .add(right.scale((j - (nX - 1) / 2.0) * (width/nX)))
-                .add(up.scale((i - (nY - 1) / 2.0) * (height / nY)).scale(-1));
-        return new Ray(Pij, Pij.subtract(location));
+        double xj = (j - (nX - 1) / 2.0) * (width/nX);
+        double yi = -(i - (nY - 1) / 2.0) * (height / nY);
+        Point Pij = Pc;
+        if (!isZero(xj)) Pij = Pij.add(right.scale(xj));
+        if (!isZero(yi)) Pij = Pij.add(up.scale(yi));
+        return new Ray(location, Pij.subtract(location));
     }
 }

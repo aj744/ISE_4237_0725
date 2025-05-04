@@ -80,7 +80,7 @@ public class SphereTests {
         final var result3 = sphere.findIntersections(new Ray(Point.ZERO, v110));
         assertNotNull(result3, "Can't be empty list");
         assertEquals(1, result3.size(), "Wrong number of points");
-        assertEquals(List.of(p110, v110), result3, "Ray crosses sphere");
+        assertEquals(List.of(p110), result3, "Ray crosses sphere");
         // TC12: Ray starts at sphere and goes outside (0 points)
         assertNull(sphere.findIntersections(new Ray(p110, v310)), "Ray's line out of sphere");
         // **** Group 2: Ray's line goes through the center
