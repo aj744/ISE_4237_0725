@@ -79,7 +79,9 @@ public class Camera implements Cloneable{
             if(checkOrthogonal(camera.up,camera.to))
                 throw new IllegalArgumentException("Vectors up and to are not orthogonal");
 
-            return (Camera) this.camera.clone();
+            camera.right = camera.up.crossProduct(camera.to).normalize();
+
+            return (Camera) this.camera;
         }
 
         public boolean checkOrthogonal(Vector a, Vector b) {return a.dotProduct(b) != 0 ;}
@@ -94,16 +96,14 @@ public class Camera implements Cloneable{
     private double width;
     private double distance;
 
-    private Camera() {
-        location = new Point(0, 0, 0);
-        right = new Vector(0, 0, 0);
-        up = new Vector(0, 0, 0);
-        to = new Vector(0, 0, 0);
-    }
-
     public static Builder getBuilder() {return new Builder();}
 
     public Ray constructRay(int nX, int nY, int j, int i) {
-        return null;
+        Ray ray = new Ray(location, to);
+        Point Pc = ray.getPoint(distance);
+        Point Pij = Pc.subtract(Point.ZERO)
+                .add(right.scale((j - (nX - 1) / 2.0) * (width/nX)))
+                .add(up.scale((i - (nY - 1) / 2.0) * (height / nY)).scale(-1));
+        return new Ray(Pij, Pij.subtract(location));
     }
 }
