@@ -25,6 +25,7 @@ public class CameraIntersectionsIntegrationTests {
     Camera camera = cameraBuilder.build();
 
     private void assertNumberOfIntersections(int numberOfIntersections, Geometry geometry, Camera camera) {
+        //for each pixel we are sending a ray and save it and sum all of it if there is Intersection.
         int OverallIntersections = 0;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -34,6 +35,7 @@ public class CameraIntersectionsIntegrationTests {
                     OverallIntersections += intersections.size();
             }
         }
+        //if the exp != actual , error
         assertEquals(
                 numberOfIntersections,
                 OverallIntersections,
@@ -43,26 +45,31 @@ public class CameraIntersectionsIntegrationTests {
 
     @Test
     void testSphereIntersection() {
+        //2 Intersection and small Sphere far from camera
         assertNumberOfIntersections(
                 2,
                 new Sphere(1, new Point(0, 0, -3)),
                 camera
         );
+        //18 Intersection and big Sphere near camera
         assertNumberOfIntersections(
                 18,
                 new Sphere(2.5, new Point(0, 0, -2.5)),
                 cameraBuilder.setLocation(new Point(0, 0, 0.5)).build()
         );
+        //10 Intersection and small Sphere near camera
         assertNumberOfIntersections(
                 10,
                 new Sphere(2, new Point(0, 0, -2)),
                 cameraBuilder.setLocation(new Point(0, 0, 0.5)).build()
         );
+        //9 Intersection and big Sphere cover camera
         assertNumberOfIntersections(
                 9,
                 new Sphere(4, new Point(0, 0, -2)),
                 camera
         );
+        //0 Intersection and small Sphere behind camera
         assertNumberOfIntersections(
                 0,
                 new Sphere(0.5, new Point(0, 0, 1)),
@@ -71,12 +78,14 @@ public class CameraIntersectionsIntegrationTests {
     }
     @Test
     void testTriangleIntersection() {
+        //1 Intersection and small triangle near camera
         assertNumberOfIntersections(
                 1,
                 new Triangle(new Point(0, 1, -2), new Point(1, -1, -2), new Point(-1, -1, -2)),
                 camera
         );
 
+        //2 Intersection and big triangle near camera
         assertNumberOfIntersections(
                 2,
                 new Triangle(new Point(0, 20, -2), new Point(1, -1, -2), new Point(-1, -1, -2)),
@@ -85,16 +94,19 @@ public class CameraIntersectionsIntegrationTests {
     }
     @Test
     void testPlaneIntersection(){
+        //9 Intersection and orthogonal plane parallel to camera
         assertNumberOfIntersections(
                 9,
                 new Plane(new Point(0,0,-2) , new Vector(0,0,-1)),
                 camera
         );
+        //9 Intersection and plane near camera
         assertNumberOfIntersections(
                 9,
                 new Plane(new Point(0,0,-7) , new Vector(0,1,-5)),
                 camera
         );
+        //6 Intersection and plane near camera and parallel to some rays
         assertNumberOfIntersections(
                 6,
                 new Plane(new Point(0,0,-7) , new Vector(0,5,-1)),

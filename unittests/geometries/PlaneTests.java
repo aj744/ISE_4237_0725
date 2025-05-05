@@ -92,9 +92,10 @@ public class PlaneTests {
                 "There is no intersections"
         );
 
+        Point p133 = new Point(1, 3, 3);
         // TC22
         assertNull(
-                plane.findIntersections(new Ray(new Point(1, 3, 3), v100)),
+                plane.findIntersections(new Ray(p133, v100)),
                 "There is no intersections"
         );
 
@@ -123,7 +124,7 @@ public class PlaneTests {
 
         // TC41
         assertNull(
-                plane.findIntersections(new Ray(Point.ZERO, v111)),
+                plane.findIntersections(new Ray(p133, v111)),
                 "There is no intersections")
         ;
     }
