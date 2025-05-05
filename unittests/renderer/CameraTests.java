@@ -27,7 +27,7 @@ class CameraTest {
      */
     @Test
     void testConstructRay() {
-        cameraBuilder.setDirection(new Vector(0, -1, 0), new Vector(0, 0, -1));
+        cameraBuilder.setDirection(new Vector(0, 0, -1), new Vector(0, -1, 0));
         Camera camera1 = cameraBuilder.setVpSize(8, 8).build();
         Camera camera2 = cameraBuilder.setVpSize(6, 6).build();
 

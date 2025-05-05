@@ -119,6 +119,17 @@ public class SphereTests {
         // TC41: Ray's line is outside sphere, ray is orthogonal to ray start to sphere's center line
         assertNull(sphere.findIntersections(new Ray(p310, v100)));
         // TC42: Ray's starts inside, ray is orthogonal to ray start to sphere's center line
-        assertNull(sphere.findIntersections(new Ray(p500, v001)));
+        final var result8 = sphere.findIntersections(new Ray(p500, v001));
+        assertNotNull(result8, "Can't be empty list");
+        assertEquals(
+                1,
+                result8.size(),
+                "Wrong number of points"
+        );
+        assertEquals(
+                List.of(new Point(0.5,0.0,0.8660254037844386)),
+                result8,
+                "Ray crosses sphere"
+        );
     }
 }

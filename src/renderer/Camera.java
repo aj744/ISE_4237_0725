@@ -28,9 +28,11 @@ public class Camera implements Cloneable{
 
         public Builder setDirection(Point target, Vector up){
             Vector to = target.subtract(camera.location);
+            /*
             if (checkOrthogonal(up,to)){
                 throw new IllegalArgumentException("Up and To must be orthogonal");
             }
+            */
             camera.to = to.normalize();
             camera.right = to.crossProduct(up).normalize();
             camera.up = camera.right.crossProduct(camera.to).normalize();
@@ -102,8 +104,7 @@ public class Camera implements Cloneable{
     public static Builder getBuilder() {return new Builder();}
 
     public Ray constructRay(int nX, int nY, int j, int i) {
-        Ray ray = new Ray(location, to);
-        Point Pc = ray.getPoint(distance);
+        Point Pc = location.add(to.scale(distance));
         double xj = (j - (nX - 1) / 2.0) * (width/nX);
         double yi = -(i - (nY - 1) / 2.0) * (height / nY);
         Point Pij = Pc;

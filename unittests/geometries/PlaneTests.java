@@ -72,7 +72,8 @@ public class PlaneTests {
         assertNull(plane.findIntersections(new Ray(p122, v100)), "There is no intersections");
 
         // TC22
-        assertNull(plane.findIntersections(new Ray(new Point(1, 3, 3), v100)), "There is no intersections");
+        Point p133 = new Point(1, 3, 3);
+        assertNull(plane.findIntersections(new Ray(p133, v100)), "There is no intersections");
 
         // TC23
         final var exp2 = plane.findIntersections(new Ray(new Point(-1,-1,-1), v100));
@@ -84,7 +85,7 @@ public class PlaneTests {
         assertNull(plane.findIntersections(new Ray(p122, v111)), "There is no intersections");
 
         // TC41
-        assertNull(plane.findIntersections(new Ray(Point.ZERO, v111)), "There is no intersections");
+        assertNull(plane.findIntersections(new Ray(p133, v111)), "There is no intersections");
     }
 
 }
