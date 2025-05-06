@@ -35,8 +35,7 @@ class GeometriesTest {
         assertNull(
                 geometries.findIntersections(
                     new Ray(new Point(1,1,2.5),
-                    new Vector(1,0,0))
-                ),
+                    new Vector(1,0,0))),
                 "no geometry is intersected"
         );
 
@@ -51,7 +50,8 @@ class GeometriesTest {
         );
 
         // TC05: all geometries are intersected
-        assertEquals(4,
+        assertEquals(
+                4,
                 geometries.findIntersections(
                         new Ray(new Point(0.6, 0.6, -2),
                         new Vector(0, 0, 1))).size(),
