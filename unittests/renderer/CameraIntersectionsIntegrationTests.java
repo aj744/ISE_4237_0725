@@ -44,6 +44,11 @@ public class CameraIntersectionsIntegrationTests {
     }
 
     @Test
+    void testCon() {
+        Camera Camera = new Camera();
+    }
+
+    @Test
     void testSphereIntersection() {
         //2 Intersection and small Sphere far from camera
         assertNumberOfIntersections(
