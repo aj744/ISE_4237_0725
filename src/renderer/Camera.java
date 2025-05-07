@@ -3,6 +3,7 @@ package renderer;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
+import scene.Scene;
 
 import java.util.MissingResourceException;
 
@@ -16,10 +17,22 @@ import static primitives.Util.isZero;
  * It supports construction using the Builder pattern.
  */
 public class Camera implements Cloneable {
-
+    private Point location;
+    private Vector right;
+    private Vector up;
+    private Vector to;
+    private double height;
+    private double width;
+    private double distance;
+    private ImageWriter imageWriter;
+    private RayTracerBase rayTracer;
+    private int nX = 1;
+    private int nY = 1;
     /**
      * Builder class for constructing a {@link Camera} instance in a flexible and readable way.
      */
+    private Camera() {}
+
     public static class Builder {
         final Camera camera = new Camera();
 
@@ -118,7 +131,9 @@ public class Camera implements Cloneable {
          * @param nY Number of rows (pixels in height).
          * @return this Builder instance.
          */
-        public Builder setResolution(double nX, double nY) {
+        public Builder setResolution(int nX, int nY) {
+            camera.nX = nX;
+            camera.nY = nY;
             return this;
         }
 
@@ -162,6 +177,15 @@ public class Camera implements Cloneable {
             if (camera.distance <= 0)
                 throw new IllegalArgumentException("distance from camera to view must be positive");
 
+            if(camera.nX <= 0 || camera.nY <= 0)
+                throw new IllegalArgumentException("nX and nY must be positive");
+            else
+                camera.imageWriter = new ImageWriter(camera.nX, camera.nY);
+
+            if (camera.rayTracer == null)
+                camera.rayTracer = new SimpleRayTracer(null);
+
+
             try {
                 return (Camera) camera.clone();
             } catch (CloneNotSupportedException e) {
@@ -182,15 +206,17 @@ public class Camera implements Cloneable {
         public boolean checkGreaterThanZero(double a) {
             return alignZero(a) <= 0;
         }
-    }
 
-    private Point location;
-    private Vector right;
-    private Vector up;
-    private Vector to;
-    private double height;
-    private double width;
-    private double distance;
+        public Builder setRayTracer(Scene scene , RayTracerType rayTracerType){
+            if(rayTracerType == RayTracerType.SIMPLE){
+                camera.rayTracer = new SimpleRayTracer(scene);
+            }
+            else {
+                camera.rayTracer = null;
+            }
+            return this;
+        }
+    }
 
     /**
      * Returns a new {@link Builder} instance to configure a Camera.
