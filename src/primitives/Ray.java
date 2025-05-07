@@ -1,5 +1,6 @@
 package primitives;
 
+import java.util.List;
 import java.util.Objects;
 
 import static primitives.Util.isZero;
@@ -68,5 +69,19 @@ public class Ray {
     @Override
     public int hashCode() {
         return Objects.hash(vector, head);
+    }
+
+    public Point findClosestPoint(List<Point> points)
+    {
+        if(points.isEmpty()) {
+            return null;
+        }
+        Point closest = points.getFirst();
+        for (Point point : points) {
+            if(point.distanceSquared(head) < closest.distanceSquared(head)) {
+                closest = point;
+            }
+        }
+        return closest;
     }
 }

@@ -16,10 +16,10 @@ public class ImageWriterTest {
         final Color blue = new Color(0, 0, 255);
         final Color red = new Color(255, 0, 0);
         ImageWriter imageWriter = new ImageWriter(nY, nX);
-        for (int i=0; i<nX; i++) {
-            if (i % pixelDim !=0){
-                for (int j=0; j<nY; j++){
-                    if (j % pixelDim == 0){
+        for (int i = 0; i < nX; i++) {
+            if (i % pixelDim != 0) {
+                for (int j = 0; j < nY; j++) {
+                    if (j % pixelDim == 0) {
                         imageWriter.writePixel(j, i, red);
                     }
                     else {
@@ -28,29 +28,11 @@ public class ImageWriterTest {
                 }
             }
             else {
-                for (int j=0; j<nY; j++){
+                for (int j = 0; j < nY; j++) {
                     imageWriter.writePixel(j, i, red);
                 }
             }
-            /*
-            if ((i/pixelX) % 50 == 0) {
-                for (int j = 0; j < nY; j++) {
-                    imageWriter.writePixel(i, j, red);
-                }
-            }
-            else {
-                for(int j=0; j<nY; j++){
-                    if(j%pixelDim==0){
-                        imageWriter.writePixel(i, j, red);
-                    }
-                    else {
-                        imageWriter.writePixel(i, j, blue);
-                    }
-                }
-            }
-
-             */
+            imageWriter.writeToImage("yellowGrid");
         }
-        imageWriter.writeToImage("yellowGrid");
     }
 }
