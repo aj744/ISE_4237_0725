@@ -1,5 +1,6 @@
 package renderer;
 
+import primitives.Color;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
@@ -242,5 +243,24 @@ public class Camera implements Cloneable {
         if (!isZero(xj)) Pij = Pij.add(right.scale(xj));
         if (!isZero(yi)) Pij = Pij.add(up.scale(yi));
         return new Ray(location, Pij.subtract(location));
+    }
+
+    public Camera renderImage() {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    public Camera printGrid(int interval , Color color){
+        for (int i = 0; i < imageWriter.nY(); i++) {
+            for (int j = 0; j < imageWriter.nX(); j++) {
+                if (i % interval == 0 || j % interval == 0) {
+                    imageWriter.writePixel(j, i, color);
+                }
+            }
+        }
+        return this;
+    }
+
+    public void writeToImage(String fileName) {
+         imageWriter.writeToImage(fileName);
     }
 }

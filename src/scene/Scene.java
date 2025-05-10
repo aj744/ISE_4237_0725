@@ -13,6 +13,10 @@ public class Scene {
     public AmbientLight ambientLight = AmbientLight.NONE;
     public Geometries geometries = new Geometries();
 
+    public Scene(String name) {
+        this.name = name;
+    }
+
     public Scene setBackground(Color background) {
         this.background = background;
         return this;
