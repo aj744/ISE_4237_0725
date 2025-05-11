@@ -4,8 +4,11 @@ import geometries.Geometries;
 import geometries.Geometry;
 import lighting.AmbientLight;
 import primitives.Color;
+import primitives.Point;
+import primitives.Ray;
 
 import java.awt.geom.GeneralPath;
+import java.util.List;
 
 public class Scene {
     public String name;

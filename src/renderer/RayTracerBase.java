@@ -11,7 +11,5 @@ public abstract class RayTracerBase {
         this.scene = scene;
     }
 
-    public abstract Color traceRay(Ray ray){
-        return ray.getIntensity();
-    }
+    public abstract Color traceRay(Ray ray);
 }

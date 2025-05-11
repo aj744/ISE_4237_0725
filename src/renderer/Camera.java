@@ -246,7 +246,12 @@ public class Camera implements Cloneable {
     }
 
     public Camera renderImage() {
-        throw new UnsupportedOperationException("Not yet implemented");
+        for (int i=0; i<this.nX; i++) {
+            for (int j=0; j<this.nY; j++) {
+                castRay(j, i);
+            }
+        }
+        return this;
     }
 
     public Camera printGrid(int interval , Color color){
@@ -262,5 +267,10 @@ public class Camera implements Cloneable {
 
     public void writeToImage(String fileName) {
          imageWriter.writeToImage(fileName);
+    }
+
+    public void castRay(int j, int i) {
+        Ray ray = constructRay(nX, nY, j, i);
+        imageWriter.writePixel(j, i, rayTracer.traceRay(ray));
     }
 }
