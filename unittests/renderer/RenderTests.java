@@ -85,12 +85,14 @@ public class RenderTests {
     /** Test for XML based scene - for bonus */
     @Test
     public void basicRenderXml() {
-        Scene scene = new Scene("Using XML");
+        //Scene scene = new Scene("Using XML");
         // enter XML file name and parse from XML file into scene object instead of the
         // new Scene above,
         // Use the code you added in appropriate packages
         // ...
         // NB: unit tests is not the correct place to put XML parsing code
+
+        Scene scene = new Scene("with xml").addGeometriesFromXml("unittests/renderer/renderTestTwoColor");
 
         camera //
                 .setRayTracer(scene, RayTracerType.SIMPLE) //

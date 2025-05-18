@@ -8,7 +8,7 @@ import primitives.Point;
  * This is an abstract class that defines the basic behavior for all geometries.
  */
 
-public abstract class Geometry implements Intersectable{
+public abstract class Geometry implements Intersectable {
 
     /**
      * Calculates and returns the normal vector to the geometry at a given point.
