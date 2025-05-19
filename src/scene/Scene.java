@@ -74,18 +74,21 @@ public class Scene {
      */
     public Scene addGeometriesFromXml(String fileName) {
         try {
+            // Load XML file
             File xmlFile = new File("XMLFiles/" + fileName + ".xml");
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
 
+            // Parse XML and normalize it
             Document document = builder.parse(xmlFile);
             document.getDocumentElement().normalize();
 
             Element xmlScene = (Element) document.getDocumentElement();
 
+            // Read background color attribute
             background = getColorFromString(xmlScene.getAttribute("background-color"));
 
-            // ambient-light
+            // Parse ambient light if present
             NodeList ambientList = xmlScene.getElementsByTagName("ambient-light");
             if (ambientList.getLength() > 0) {
                 Element ambient = (Element) ambientList.item(0);
@@ -94,12 +97,13 @@ public class Scene {
                 throw new IllegalArgumentException("No ambient light found");
             }
 
-            // geometries
+            // Parse geometries
             NodeList geometriesList = xmlScene.getElementsByTagName("geometries");
             if (geometriesList.getLength() > 0) {
                 Element geometries = (Element) geometriesList.item(0);
                 NodeList shapes = geometries.getChildNodes();
 
+                // Iterate over geometry elements (e.g., triangle, plane, sphere)
                 for (int i = 0; i < shapes.getLength(); i++) {
                     Node shapeNode = shapes.item(i);
                     if (shapeNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -110,6 +114,7 @@ public class Scene {
                         NamedNodeMap attributes = shape.getAttributes();
                         switch (tagName) {
                             case "triangle" -> {
+                                // Expect 3 points for triangle
                                 if (attributes.getLength() != 3) {
                                     throw new InsufficientResourcesException("Triangle should have 3 attributes");
                                 } else {
@@ -123,6 +128,7 @@ public class Scene {
                                 }
                             }
                             case "plane" -> {
+                                // Expect point and normal vector
                                 if (attributes.getLength() != 2) {
                                     throw new InsufficientResourcesException("Plane should have 2 attributes");
                                 } else {
@@ -133,6 +139,7 @@ public class Scene {
                                 }
                             }
                             case "sphere" -> {
+                                // Expect center point and radius
                                 if (attributes.getLength() == 2) {
                                     this.geometries.add(new Sphere(
                                             Double.parseDouble(attributes.item(1).getNodeValue()),
@@ -142,13 +149,44 @@ public class Scene {
                                     throw new InsufficientResourcesException("Sphere should have 2 attributes");
                                 }
                             }
+                            case "tube" -> {
+                                // Expect ray and radius
+                                if (attributes.getLength() == 2) {
+                                    this.geometries.add(new Tube(
+                                            Double.parseDouble(attributes.item(1).getNodeValue()),
+                                            getRayFromString(attributes.item(0).getNodeValue())
+                                    ));
+                                } else {
+                                    throw new InsufficientResourcesException("Sphere should have 2 attributes");
+                                }
+                            }
+                            case "polygon" -> {
+                                List<Point> points = new ArrayList<>();
+                                for (int j=0; j<attributes.getLength(); j++) {
+                                    points.add(getPointFromString(attributes.item(j).getNodeValue()));
+                                }
+                                this.geometries.add(new Polygon(points.toArray(new Point[0])));
+                            }
+                            case "cylinder" -> {
+                                // Expect ray and radius
+                                if (attributes.getLength() == 2) {
+                                    this.geometries.add(new Cylinder(
+                                            getRayFromString(attributes.item(0).getNodeValue()),
+                                            Double.parseDouble(attributes.item(1).getNodeValue()),
+                                            Double.parseDouble(attributes.item(2).getNodeValue())
+                                    ));
+                                } else {
+                                    throw new InsufficientResourcesException("Sphere should have 2 attributes");
+                                }
+                            }
                         }
-                        System.out.println();
+                        System.out.println(); // Print new line after each shape
                     }
                 }
             }
 
         } catch (Exception e) {
+            // Handle any parsing or runtime exception
             System.out.println(e.getMessage());
         }
         return this;
@@ -156,12 +194,12 @@ public class Scene {
 
     /**
      * Parses a string of the form "x y z" into a {@link Double3} object.
-     * @param s The string to parse.
+     * @param string The string to parse.
      * @return A Double3 with the parsed components.
      * @throws IllegalArgumentException If the input does not contain exactly 3 numbers.
      */
-    private Double3 getDouble3FromString(String s) {
-        String[] colorArray = s.split(" ");
+    private Double3 getDouble3FromString(String string) {
+        String[] colorArray = string.split(" ");
         if (colorArray.length != 3) {
             throw new IllegalArgumentException("Expected 3 numbers for background color");
         }
@@ -206,5 +244,17 @@ public class Scene {
      */
     private Vector getVectorFromString(String string) {
         return new Vector(getDouble3FromString(string));
+    }
+
+    /**
+     * Parses a string into a {@link Ray} object. "0 0 0 + 0 0 0"
+     * @param string The string representation.
+     * @return A Ray object.
+     */
+    private Ray getRayFromString(String string) {
+        return new Ray(
+                getPointFromString(string.substring(0, string.indexOf(" +"))),
+                getVectorFromString(string.substring(string.indexOf('+' + 1)))
+        );
     }
 }
