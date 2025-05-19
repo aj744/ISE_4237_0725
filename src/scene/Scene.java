@@ -2,48 +2,76 @@ package scene;
 
 import geometries.*;
 import lighting.AmbientLight;
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 import primitives.*;
 
 import javax.naming.InsufficientResourcesException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.awt.geom.GeneralPath;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import org.w3c.dom.*;
-import javax.xml.parsers.*;
-import java.io.File;
 
-import java.io.*;
-
-
+/**
+ * Represents a 3D scene including background color, ambient light, and a collection of geometries.
+ */
 public class Scene {
+    /** Scene name */
     public String name;
+
+    /** Background color of the scene */
     public Color background;
+
+    /** Ambient light in the scene */
     public AmbientLight ambientLight = AmbientLight.NONE;
+
+    /** Collection of geometries in the scene */
     public Geometries geometries = new Geometries();
 
+    /**
+     * Constructor to initialize a scene with a given name.
+     * @param name Name of the scene.
+     */
     public Scene(String name) {
         this.name = name;
     }
 
+    /**
+     * Sets the background color of the scene.
+     * @param background The background color to set.
+     * @return The current scene (for chaining).
+     */
     public Scene setBackground(Color background) {
         this.background = background;
         return this;
     }
+
+    /**
+     * Sets the ambient light of the scene.
+     * @param ambientLight The ambient light to set.
+     * @return The current scene (for chaining).
+     */
     public Scene setAmbientLight(AmbientLight ambientLight) {
         this.ambientLight = ambientLight;
         return this;
     }
+
+    /**
+     * Adds a geometry object to the scene.
+     * @param geometry The geometry to add.
+     * @return The current scene (for chaining).
+     */
     public Scene addGeometry(Geometry geometry) {
         geometries.add(geometry);
         return this;
     }
 
+    /**
+     * Loads and parses geometries and lighting from an XML file and adds them to the scene.
+     * Expected tags: background-color, ambient-light, geometries, triangle, plane, sphere.
+     * @param fileName The name of the XML file (without the ".xml" extension).
+     * @return The current scene (for chaining).
+     */
     public Scene addGeometriesFromXml(String fileName) {
         try {
             File xmlFile = new File(fileName + ".xml");
@@ -62,8 +90,7 @@ public class Scene {
             if (ambientList.getLength() > 0) {
                 Element ambient = (Element) ambientList.item(0);
                 ambientLight = new AmbientLight(getColorFromString(ambient.getAttribute("color")));
-            }
-            else {
+            } else {
                 throw new IllegalArgumentException("No ambient light found");
             }
 
@@ -97,7 +124,7 @@ public class Scene {
                             }
                             case "plane" -> {
                                 if (attributes.getLength() != 2) {
-                                    throw new InsufficientResourcesException("Triangle should have 3 attributes");
+                                    throw new InsufficientResourcesException("Plane should have 2 attributes");
                                 } else {
                                     this.geometries.add(new Plane(
                                             getPointFromString(attributes.item(0).getNodeValue()),
@@ -111,16 +138,11 @@ public class Scene {
                                             Double.parseDouble(attributes.item(1).getNodeValue()),
                                             getPointFromString(attributes.item(0).getNodeValue())
                                     ));
-                                } else if (attributes.getLength() == 2) {
-
-                                }
-                                else {
-                                    throw new InsufficientResourcesException("Triangle should have 3 attributes");
+                                } else {
+                                    throw new InsufficientResourcesException("Sphere should have 2 attributes");
                                 }
                             }
                         }
-
-
                         System.out.println();
                     }
                 }
@@ -132,6 +154,12 @@ public class Scene {
         return this;
     }
 
+    /**
+     * Parses a string of the form "x y z" into a {@link Double3} object.
+     * @param s The string to parse.
+     * @return A Double3 with the parsed components.
+     * @throws IllegalArgumentException If the input does not contain exactly 3 numbers.
+     */
     private Double3 getDouble3FromString(String s) {
         String[] colorArray = s.split(" ");
         if (colorArray.length != 3) {
@@ -139,28 +167,44 @@ public class Scene {
         }
 
         int[] rgb = new int[3];
-        for(int i = 0; i < colorArray.length; i++) {
+        for (int i = 0; i < colorArray.length; i++) {
             rgb[i] = Integer.parseInt(colorArray[i]);
         }
         return new Double3(rgb[0], rgb[1], rgb[2]);
     }
 
+    /**
+     * Converts a string of RGB values into a {@link Color} object.
+     * @param string A string like "255 255 255".
+     * @return A Color object with the corresponding values.
+     * @throws IllegalArgumentException If any value is out of the 0–255 range.
+     */
     private Color getColorFromString(String string) {
         Double3 color = getDouble3FromString(string);
-        if (color.d1() < 0 || color.d1() > 255 || color.d2() < 0 || color.d2() > 255|| color.d3() < 0
-                || color.d3() > 255) {
+        if (color.d1() < 0 || color.d1() > 255 ||
+                color.d2() < 0 || color.d2() > 255 ||
+                color.d3() < 0 || color.d3() > 255) {
             throw new IllegalArgumentException("Expected 0 <= color <= 255");
         }
 
         return new Color(color.d1(), color.d2(), color.d3());
     }
 
+    /**
+     * Parses a string into a {@link Point} object.
+     * @param string The string representation.
+     * @return A Point object.
+     */
     private Point getPointFromString(String string) {
         return new Point(getDouble3FromString(string));
     }
 
+    /**
+     * Parses a string into a {@link Vector} object.
+     * @param string The string representation.
+     * @return A Vector object.
+     */
     private Vector getVectorFromString(String string) {
         return new Vector(getDouble3FromString(string));
     }
 }
-
