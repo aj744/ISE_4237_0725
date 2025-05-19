@@ -74,7 +74,7 @@ public class Scene {
      */
     public Scene addGeometriesFromXml(String fileName) {
         try {
-            File xmlFile = new File(fileName + ".xml");
+            File xmlFile = new File("XMLFiles/" + fileName + ".xml");
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
 
@@ -149,7 +149,7 @@ public class Scene {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
         return this;
     }

@@ -92,7 +92,7 @@ public class RenderTests {
         // ...
         // NB: unit tests is not the correct place to put XML parsing code
 
-        Scene scene = new Scene("with xml").addGeometriesFromXml("unittests/renderer/renderTestTwoColor");
+        Scene scene = new Scene("with xml").addGeometriesFromXml("renderTestTwoColor");
 
         camera //
                 .setRayTracer(scene, RayTracerType.SIMPLE) //
