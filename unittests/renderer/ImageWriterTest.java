@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import primitives.Color;
 import renderer.ImageWriter;
 
+import static java.awt.Color.*;
+
 public class ImageWriterTest {
 
     @Test
@@ -13,8 +15,8 @@ public class ImageWriterTest {
         final int nX = 500;
         final int nY = 800;
         final int pixelDim = nX / pixelX;
-        final Color blue = new Color(0, 0, 255);
-        final Color red = new Color(255, 0, 0);
+        final Color blue = new Color(BLUE);
+        final Color red = new Color(RED);
         ImageWriter imageWriter = new ImageWriter(nY, nX);
         for (int i = 0; i < nX; i++) {
             if (i % pixelDim != 0) {

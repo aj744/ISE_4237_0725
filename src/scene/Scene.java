@@ -219,13 +219,7 @@ public class Scene {
      */
     private Color getColorFromString(String string) {
         Double3 color = getDouble3FromString(string);
-        if (color.d1() < 0 || color.d1() > 255 ||
-                color.d2() < 0 || color.d2() > 255 ||
-                color.d3() < 0 || color.d3() > 255) {
-            throw new IllegalArgumentException("Expected 0 <= color <= 255");
-        }
-
-        return new Color(color.d1(), color.d2(), color.d3());
+        return new Color(color);
     }
 
     /**
