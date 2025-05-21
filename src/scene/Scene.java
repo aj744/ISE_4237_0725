@@ -2,6 +2,7 @@ package scene;
 
 import geometries.*;
 import lighting.AmbientLight;
+import lighting.LightSource;
 import org.w3c.dom.*;
 import primitives.*;
 
@@ -10,6 +11,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -27,6 +29,8 @@ public class Scene {
 
     /** Collection of geometries in the scene */
     public Geometries geometries = new Geometries();
+
+    public List<LightSource> lights = new LinkedList<>();
 
     /**
      * Constructor to initialize a scene with a given name.
@@ -53,6 +57,11 @@ public class Scene {
      */
     public Scene setAmbientLight(AmbientLight ambientLight) {
         this.ambientLight = ambientLight;
+        return this;
+    }
+
+    public Scene setLights(List<LightSource> lights) {
+        this.lights = lights;
         return this;
     }
 

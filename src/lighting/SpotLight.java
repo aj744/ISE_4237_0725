@@ -1,4 +1,28 @@
 package lighting;
 
-public class SpotLight {
+import primitives.Color;
+import primitives.Vector;
+
+public class SpotLight extends PointLight {
+    private final Vector direction;
+
+    public SpotLight(Color intensity, Vector position, Vector direction) {
+        super(intensity, position);
+        this.direction = direction;
+    }
+
+    @Override
+    public PointLight setKC(double kC) {
+        return (PointLight) super.setKC(kC);
+    }
+
+    @Override
+    public PointLight setKL(double kL) {
+        return (PointLight) super.setKC(kL);
+    }
+
+    @Override
+    public PointLight setKQ(double kQ) {
+        return (PointLight) super.setKC(kQ);
+    }
 }
