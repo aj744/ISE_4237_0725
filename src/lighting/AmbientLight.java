@@ -5,8 +5,8 @@ import primitives.Color;
 /**
  * The scene's ambient light
  */
-public class AmbientLight {
-    final Color Ia;
+public class AmbientLight extends Light {
+
     public static AmbientLight NONE = new AmbientLight(Color.BLACK);
 
     /**
@@ -14,14 +14,11 @@ public class AmbientLight {
      * @param ia ambient color
      */
     public AmbientLight(Color ia) {
-        Ia = ia;
+        super(ia);
     }
 
     /**
      * get the ambient light intensity
      * @return the ambient light color
      */
-    public Color getIntensity() {
-        return Ia;
-    }
 }

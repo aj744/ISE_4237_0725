@@ -58,17 +58,29 @@ public class Plane extends Geometry {
         return normal;
     }
 
+    public Vector getNormal() {
+        return normal;
+    }
+
     @Override
-    public List<Point> findIntersections(Ray ray) {
-        Point head = ray.getHead();
-        if (head.equals(point)) return null;
-        Vector u = point.subtract(head);
-        double nominator = u.dotProduct(normal);
+    public List<Intersection> calculateIntersectionsHelper(Ray ray) {
+        // Check if the ray is parallel to the plane
         double denominator = normal.dotProduct(ray.getVector());
-        if (Util.isZero(denominator)) return null;
-        double t = Util.alignZero(nominator / denominator);
-        if (t > 0) return List.of(ray.getPoint(t));
-        return null;
+        if (denominator == 0) {
+            return null; // The ray is parallel to the plane
+        }
+
+        if(ray.getHead().equals(point)) {
+            return null; // The ray starts on the plane
+        }
+        // Calculate the t value for the intersection point
+        double t = normal.dotProduct(point.subtract(ray.getHead())) / denominator;
+        if (t < 0) {
+            return null; // The intersection point is behind the ray's origin
+        }
+        // Calculate the intersection point
+        Intersection intersection = new Intersection(this, ray.getPoint(t));
+        return List.of(intersection);
     }
 }
 

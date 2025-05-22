@@ -29,32 +29,36 @@ public class Triangle extends Polygon {
     }
 
     @Override
-    public List<Point> findIntersections(Ray ray) {
-        List<Point> intersections = this.plane.findIntersections(ray);
-        if (intersections == null) return null;
+    public List<Intersection> calculateIntersectionsHelper(Ray ray) {
 
-        Point a = this.vertices.get(0);
-        Point b = this.vertices.get(1);
-        Point c = this.vertices.get(2);
-        Point p = intersections.getFirst();
-        Point rayPoint = ray.getHead();
-        Vector rayVector = ray.getVector();
+        List<Intersection> intersections = plane.calculateIntersectionsHelper(ray);
+        if (intersections == null) {
+            return null;
+        }
+        Point p = intersections.getFirst().point;
+        // check if the point is one of the vertices
+        if (p.equals(vertices.get(0)) || p.equals(vertices.get(1)) || p.equals(vertices.get(2))) {
+            return List.of(new Intersection(this, p));
+        }
+        // check if the point is on the edge of the triangle
 
-
-        Vector v0 = a.subtract(rayPoint);
-        Vector v1 = b.subtract(rayPoint);
-        Vector v2 = c.subtract(rayPoint);
-
-        Vector normal1 = v0.crossProduct(v1).normalize();
-        Vector normal2 = v1.crossProduct(v2).normalize();
-        Vector normal3 = v2.crossProduct(v0).normalize();
-
-        final double res1 = alignZero(rayVector.dotProduct(normal1));
-        final double res2 = alignZero(rayVector.dotProduct(normal2));
-        final double res3 = alignZero(rayVector.dotProduct(normal3));
-
-        if (res1 > 0 && res2 > 0 && res3 > 0 || res1 < 0 && res2 < 0 && res3 < 0) {
-            return intersections;
+        // Check if the point is inside the triangle using the cross product
+        Vector v1 = vertices.get(0).subtract(p).normalize();
+        Vector v2 = vertices.get(1).subtract(p).normalize();
+        Vector v3 = vertices.get(2).subtract(p).normalize();
+        //check if they are the same
+        if (v1.equals(v2) || v1.equals(v3) || v2.equals(v3)) {
+            return null;
+        }
+        // check if the vectors are in the opposite direction
+        if (v1.equals(v2.scale(-1)) || v1.equals(v3.scale(-1)) || v2.equals(v3.scale(-1))) {
+            return List.of(new Intersection(this, p));
+        }
+        double s1 = v1.crossProduct(v2).dotProduct(plane.getNormal());
+        double s2 = v2.crossProduct(v3).dotProduct(plane.getNormal());
+        double s3 = v3.crossProduct(v1).dotProduct(plane.getNormal());
+        if (s1 > 0 && s2 > 0 && s3 > 0 || s1 < 0 && s2 < 0 && s3 < 0) {
+            return List.of(new Intersection(this, p));
         } else {
             return null;
         }
