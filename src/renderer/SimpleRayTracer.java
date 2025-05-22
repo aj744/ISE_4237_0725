@@ -4,8 +4,8 @@ import geometries.Intersectable.Intersection;
 import primitives.Color;
 import primitives.Point;
 import primitives.Ray;
-import primitives.Vector;
 import scene.Scene;
+import primitives.Material;
 
 import java.util.List;
 
@@ -40,17 +40,10 @@ public class SimpleRayTracer extends RayTracerBase {
         return calcColor(ray.findClosestPoint(intersections));
     }
 
-    /**
-     * Calculates the color at a given point. Currently, returns only ambient light intensity.
-     *
-     * @param point the point at which to calculate the color
-     * @return the color at the point (ambient light only)
-     */
-    private Color calcColor(Point point) {
-        return scene.ambientLight.getIntensity();
-    }
 
-    public boolean preprocessIntersection(Intersection intersection, Vector ray) {
 
+
+    private Color calcColor(Intersection intersection , Ray ray) {
+        return scene.ambientLight.getIntensity().scale(intersection.geometry.getMaterial().Ka);
     }
 }
