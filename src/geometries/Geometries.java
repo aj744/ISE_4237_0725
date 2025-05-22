@@ -18,8 +18,9 @@ public class Geometries extends Intersectable {
         this.geometries.addAll(Arrays.asList(geometries));
     }
 
+    /*
     @Override
-    public List<Point> findIntersections(Ray ray) {
+    public List<Intersection> findIntersections(Ray ray) {
         List<Point> intersections = null;
         for (Intersectable geometry : this.geometries) {
             List<Point> geometryIntersections = geometry.findIntersections(ray);
@@ -31,5 +32,10 @@ public class Geometries extends Intersectable {
             }
         }
         return intersections;
+    }*/
+
+    @Override
+    protected List<Intersection> calculateIntersectionsHelper(Ray ray) {
+        return null;
     }
 }
