@@ -1,4 +1,5 @@
 package geometries;
+import primitives.Material;
 import primitives.Point;
 import primitives.Ray;
 import java.util.List;
@@ -12,11 +13,18 @@ public abstract class Intersectable {
     public static class Intersection {
         public final Geometry geometry;
         public final Point point;
+        public final Material material;
 
-        public Intersection(Geometry geometry, Point point) {
+        public Intersection(Geometry geometry, Point point, Material material) {
             this.geometry = geometry;
             this.point = point;
+            if(material != null)
+                this.material = material;
+            else
+                throw new IllegalArgumentException("Material can't be null!");
         }
+
+
 
         @Override
         public boolean equals(Object o) {
