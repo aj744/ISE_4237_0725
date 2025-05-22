@@ -3,6 +3,7 @@ package renderer;
 import primitives.Color;
 import primitives.Point;
 import primitives.Ray;
+import primitives.Vector;
 import scene.Scene;
 
 import java.util.List;
@@ -46,5 +47,9 @@ public class SimpleRayTracer extends RayTracerBase {
      */
     private Color calcColor(Point point) {
         return scene.ambientLight.getIntensity();
+    }
+
+    public boolean preprocessIntersection(Intersection intersection, Vector ray) {
+
     }
 }
