@@ -1,6 +1,7 @@
 package lighting;
 
 import primitives.Color;
+import primitives.Point;
 import primitives.Vector;
 
 public class SpotLight extends PointLight {
@@ -24,5 +25,11 @@ public class SpotLight extends PointLight {
     @Override
     public PointLight setKQ(double kQ) {
         return (PointLight) super.setKC(kQ);
+    }
+
+    @Override
+    public Color getIntensity(Point p) {
+        Vector dir = p.subtract(position).normalize();
+        return super.getIntensity(p).scale(Math.max(0, direction.dotProduct(dir)));
     }
 }
