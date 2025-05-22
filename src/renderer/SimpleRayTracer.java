@@ -1,5 +1,6 @@
 package renderer;
 
+import geometries.Intersectable.Intersection;
 import primitives.Color;
 import primitives.Point;
 import primitives.Ray;
@@ -40,7 +41,7 @@ public class SimpleRayTracer extends RayTracerBase {
     }
 
     /**
-     * Calculates the color at a given point. Currently returns only ambient light intensity.
+     * Calculates the color at a given point. Currently, returns only ambient light intensity.
      *
      * @param point the point at which to calculate the color
      * @return the color at the point (ambient light only)

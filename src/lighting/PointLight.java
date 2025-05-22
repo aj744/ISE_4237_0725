@@ -4,7 +4,7 @@ import primitives.Color;
 import primitives.Point;
 import primitives.Vector;
 
-public class PointLight implements LightSource extends Light{
+public class PointLight extends Light implements LightSource {
     protected final Vector position;
     private double kC = 1;
     private double kL = 0;

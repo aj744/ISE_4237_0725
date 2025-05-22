@@ -4,7 +4,7 @@ import primitives.Color;
 import primitives.Point;
 import primitives.Vector;
 
-public class DirectionalLight implements LightSource extends Light{
+public class DirectionalLight extends Light implements LightSource {
     private final Vector direction;
 
     public DirectionalLight(Color intensity, Vector direction) {
