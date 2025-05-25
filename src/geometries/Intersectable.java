@@ -44,7 +44,7 @@ public abstract class Intersectable {
      * @param ray the ray that comes through the objects
      * @return list of points where the ray intersect the object
      */
-    public final List<Point> findIntersections(Ray ray) {
+    public List<Point> findIntersections(Ray ray) {
         var list = calculateIntersections(ray);
         return list == null ? null
                 : list.stream().map(intersection -> intersection.point).toList();
