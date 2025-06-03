@@ -23,7 +23,7 @@ public class SphereTests {
     public void TestGetNormal() {
         // ============ Equivalence Partitions Tests ==============
         // TC01: A point on the sphere's surface should return the correct normal
-        Sphere sphere = new Sphere(1, new Point(0, 0, 0));
+        Sphere sphere = new Sphere(new Point(0, 0, 0), 1);
 
         // Expected normal is (1, 0, 0) for a point on the positive X-axis
         assertEquals(
@@ -44,7 +44,7 @@ public class SphereTests {
      */
     @Test
     public void testFindIntersections() {
-        Sphere sphere = new Sphere(1d, p100);
+        Sphere sphere = new Sphere(p100, 1d);
         final Point gp1 = new Point(0.0651530771650466, 0.355051025721682, 0);
         final Point gp2 = new Point(1.53484692283495, 0.844948974278318, 0);
         final var exp = List.of(gp1, gp2);

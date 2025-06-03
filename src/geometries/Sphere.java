@@ -24,10 +24,10 @@ public class Sphere extends RadialGeometry {
     /**
      * Constructs a Sphere with a given radius and center point.
      *
-     * @param radius The radius of the sphere (must be greater than 0).
      * @param center The center point of the sphere.
+     * @param radius The radius of the sphere (must be greater than 0).
      */
-    public Sphere(double radius, Point center) {
+    public Sphere(Point center, double radius) {
         super(radius); // send to DAD ctor
         this.center = center; // and set the new fileds
     }
@@ -48,7 +48,7 @@ public class Sphere extends RadialGeometry {
     public List<Intersection> calculateIntersectionsHelper(Ray ray) {
 
         Point p0 = ray.getHead();
-        Vector dir = ray.getVector();
+        Vector dir = ray.getDirection();
 
         if (p0.equals(center)) {
             // The ray starts at the center of the sphere

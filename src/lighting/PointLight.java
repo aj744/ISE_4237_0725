@@ -5,27 +5,27 @@ import primitives.Point;
 import primitives.Vector;
 
 public class PointLight extends Light implements LightSource {
-    protected final Vector position;
+    protected final Point position;
     private double kC = 1;
     private double kL = 0;
     private double kQ = 0;
 
-    public PointLight(Color intensity, Vector position) {
+    public PointLight(Point position, Color intensity) {
         super(intensity);
         this.position = position;
     }
 
-    public PointLight setKC(double kC) {
+    public PointLight setKc(double kC) {
         this.kC = kC;
         return this;
     }
 
-    public PointLight setKL(double kL) {
+    public PointLight setKl(double kL) {
         this.kL= kL;
         return this;
     }
 
-    public PointLight setKQ(double kQ) {
+    public PointLight setKq(double kQ) {
         this.kQ = kQ;
         return this;
     }
@@ -38,6 +38,6 @@ public class PointLight extends Light implements LightSource {
 
     @Override
     public Vector getL(Point p) {
-        return p.subtract(position);
+        return p.subtract(position).normalize();
     }
 }

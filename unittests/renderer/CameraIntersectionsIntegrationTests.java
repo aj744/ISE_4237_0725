@@ -48,31 +48,31 @@ public class CameraIntersectionsIntegrationTests {
         //2 Intersection and small Sphere far from camera
         assertNumberOfIntersections(
                 2,
-                new Sphere(1, new Point(0, 0, -3)),
+                new Sphere(new Point(0, 0, -3), 1),
                 camera
         );
         //18 Intersection and big Sphere near camera
         assertNumberOfIntersections(
                 18,
-                new Sphere(2.5, new Point(0, 0, -2.5)),
+                new Sphere(new Point(0, 0, -2.5), 2.5),
                 cameraBuilder.setLocation(new Point(0, 0, 0.5)).build()
         );
         //10 Intersection and small Sphere near camera
         assertNumberOfIntersections(
                 10,
-                new Sphere(2, new Point(0, 0, -2)),
+                new Sphere(new Point(0, 0, -2), 2),
                 cameraBuilder.setLocation(new Point(0, 0, 0.5)).build()
         );
         //9 Intersection and big Sphere cover camera
         assertNumberOfIntersections(
                 9,
-                new Sphere(4, new Point(0, 0, -2)),
+                new Sphere(new Point(0, 0, -2), 4),
                 camera
         );
         //0 Intersection and small Sphere behind camera
         assertNumberOfIntersections(
                 0,
-                new Sphere(0.5, new Point(0, 0, 1)),
+                new Sphere(new Point(0, 0, 1), 0.5),
                 camera
         );
     }

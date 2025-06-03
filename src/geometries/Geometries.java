@@ -36,6 +36,16 @@ public class Geometries extends Intersectable {
 
     @Override
     protected List<Intersection> calculateIntersectionsHelper(Ray ray) {
-        return null;
+        List<Intersection> intersections = null;
+        for (Intersectable geometry : this.geometries) {
+            List<Intersection> geometryIntersections = geometry.calculateIntersectionsHelper(ray);
+            if (geometryIntersections != null) {
+                if (intersections == null) {
+                    intersections = new LinkedList<>();
+                }
+                intersections.addAll(geometryIntersections);
+            }
+        }
+        return intersections;
     }
 }

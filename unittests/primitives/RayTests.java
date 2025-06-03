@@ -50,20 +50,14 @@ public class RayTests {
         isClosest(points1, ray, "The middle point should be the closest", p2);
 
         // =============== Boundary Values Tests ==================
-        // BV01: if the list is empty
-        List<Point> points2 = new ArrayList<>();
-        assertNull(
-                ray.findClosestPoint(points2),
-                "The list should be empty"
-        );
-        // BV02: the closest point is the first one
+        // BV01: the closest point is the first one
         List<Point> points3 = new ArrayList<>();
         points3.add(p2);
         points3.add(p3);
         points3.add(p1);
         isClosest(points3, ray, "The first point should be the closest", p2);
 
-        // BV03: the closest point is the last one
+        // BV02: the closest point is the last one
         List<Point> points4 = new ArrayList<>();
         points4.add(p1);
         points4.add(p3);

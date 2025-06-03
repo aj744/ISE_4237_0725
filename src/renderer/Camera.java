@@ -304,6 +304,9 @@ public class Camera implements Cloneable {
     public Camera renderImage() {
         for (int i=0; i<this.nX; i++) {
             for (int j=0; j<this.nY; j++) {
+                if (i==500 && j==500) {
+                    System.out.println("here");
+                }
                 castRay(j, i);
             }
         }

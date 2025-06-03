@@ -22,7 +22,7 @@ public class Scene {
     public String name;
 
     /** Background color of the scene */
-    public Color background;
+    public Color background = Color.BLACK;
 
     /** Ambient light in the scene */
     public AmbientLight ambientLight = AmbientLight.NONE;
@@ -151,8 +151,7 @@ public class Scene {
                                 // Expect center point and radius
                                 if (attributes.getLength() == 2) {
                                     this.geometries.add(new Sphere(
-                                            Double.parseDouble(attributes.item(1).getNodeValue()),
-                                            getPointFromString(attributes.item(0).getNodeValue())
+                                            getPointFromString(attributes.item(0).getNodeValue()), Double.parseDouble(attributes.item(1).getNodeValue())
                                     ));
                                 } else {
                                     throw new InsufficientResourcesException("Sphere should have 2 attributes");

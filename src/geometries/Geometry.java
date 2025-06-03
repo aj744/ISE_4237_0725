@@ -5,6 +5,8 @@ import primitives.Material;
 import primitives.Vector;
 import primitives.Point;
 
+import static java.awt.Color.BLACK;
+
 /**
  * Represents a geometric shape in 3D space.
  * This is an abstract class that defines the basic behavior for all geometries.
@@ -13,7 +15,7 @@ import primitives.Point;
 public abstract class Geometry extends Intersectable {
 
     private Material material = new Material();
-    protected  Color emission = new Color(java.awt.Color.BLACK);
+    protected  Color emission = new Color(BLACK);
 
     public Color getEmission() {
         return emission;

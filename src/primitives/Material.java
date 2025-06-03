@@ -2,42 +2,42 @@ package primitives;
 
 public class Material {
 
-    public Double3 Ka = Double3.ZERO;
-    public Double3 Ks = Double3.ZERO;
-    public Double3 Kd = Double3.ZERO;
-    public double Nsh = 0;
+    public Double3 kA = Double3.ONE;
+    public Double3 kS = Double3.ZERO;
+    public Double3 kD = Double3.ZERO;
+    public int nShininess = 0;
 
-    public Material setKs(Double3 Ks) {
-        this.Ks = Ks;
+    public Material setKS(Double3 Ks) {
+        this.kS = Ks;
         return this;
     }
 
-    public Material setKd(Double3 Kd) {
-        this.Kd = Kd;
+    public Material setKD(Double3 Kd) {
+        this.kD = Kd;
         return this;
     }
 
-    public Material setKs(double Ks) {
-        this.Ks = new Double3(Ks);
+    public Material setKS(double Ks) {
+        this.kS = new Double3(Ks);
         return this;
     }
 
-    public Material setKd(double Kd) {
-        this.Kd = new Double3(Kd);
+    public Material setKD(double Kd) {
+        this.kD = new Double3(Kd);
         return this;
     }
 
-    public Material setNsh(double Nsh) {
-        this.Nsh = Nsh;
+    public Material setShininess(int Nsh) {
+        this.nShininess = Nsh;
         return this;
     }
 
     public Material setKa(Double3 KaParam){
-        this.Ka = KaParam;
+        this.kA = KaParam;
         return this;
     }
     public Material setKa(double rgb){
-        this.Ka = new Double3(rgb);
+        this.kA = new Double3(rgb);
         return this;
     }
 

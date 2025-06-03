@@ -52,7 +52,7 @@ class LightsTests {
     /** Material for some of the geometries in the tests */
     private final Material       material                = new Material().setKD(KD3).setKS(KS3).setShininess(SHININESS);
     /** Light color for tests with triangles */
-    private final Color          trianglesLightColor     = new Color(800, 500, 250);
+    private final Color          trianglesLightColor     = new Color(100, 100, 250);
     /** Light color for tests with sphere */
     private final Color          sphereLightColor        = new Color(800, 500, 0);
     /** Color of the sphere */
@@ -111,8 +111,8 @@ class LightsTests {
     @Test
     void spherePoint() {
         scene1.geometries.add(sphere);
-        scene1.lights.add(new PointLight(sphereLightColor, sphereLightPosition) //
-                .setKl(0.001).setKq(0.0002));
+        scene1.lights.add(new PointLight(sphereLightPosition, sphereLightColor) //
+                .setKl(0.005).setKq(0.0002));
 
         camera1 //
                 .setResolution(500, 500) //
@@ -151,7 +151,7 @@ class LightsTests {
     @Test
     void trianglesPoint() {
         scene2.geometries.add(triangle1, triangle2);
-        scene2.lights.add(new PointLight(trianglesLightColor, trianglesLightPosition) //
+        scene2.lights.add(new PointLight(trianglesLightPosition, trianglesLightColor) //
                 .setKl(0.001).setKq(0.0002));
 
         camera2.setResolution(500, 500) //
@@ -179,7 +179,7 @@ class LightsTests {
         scene1.geometries.add(sphere);
         scene1.lights
                 .add(new SpotLight(sphereLightColor, sphereLightPosition, new Vector(1, 1, -0.5)) //
-                        .setKl(0.001).setKq(0.00004).setNarrowBeam(10));
+                        .setKl(0.001).setKq(0.00004));//.setNarrowBeam(10));
 
         camera1.setResolution(500, 500) //
                 .build() //
@@ -192,7 +192,7 @@ class LightsTests {
     void trianglesSpotSharp() {
         scene2.geometries.add(triangle1, triangle2);
         scene2.lights.add(new SpotLight(trianglesLightColor, trianglesLightPosition, trianglesLightDirection) //
-                .setKl(0.001).setKq(0.00004).setNarrowBeam(10));
+                .setKl(0.001).setKq(0.00002).setNarrowBeam(1));
 
         camera2.setResolution(500, 500) //
                 .build() //

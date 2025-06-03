@@ -5,8 +5,6 @@ import geometries.Intersectable.Intersection;
 import java.util.List;
 import java.util.Objects;
 
-import static primitives.Util.isZero;
-
 /**
  * Represents a ray in 3D space, defined by a starting point and a direction vector.
  */
@@ -25,7 +23,7 @@ public class Ray {
      * get method for direction
      * @return the direction
      */
-    public Vector getVector() { return vector; }
+    public Vector getDirection() { return vector; }
 
     /**
      * get method for point

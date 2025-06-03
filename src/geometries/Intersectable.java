@@ -1,7 +1,10 @@
 package geometries;
+import lighting.LightSource;
 import primitives.Material;
 import primitives.Point;
 import primitives.Ray;
+import primitives.Vector;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -14,17 +17,19 @@ public abstract class Intersectable {
         public final Geometry geometry;
         public final Point point;
         public final Material material;
+        public Vector normal;
+        public Vector v;
+        public double vNormal;
+        public LightSource light;
+        public Vector l;
+        public double lNormal;
 
-        public Intersection(Geometry geometry, Point point, Material material) {
+
+        public Intersection(Geometry geometry, Point point) {
             this.geometry = geometry;
             this.point = point;
-            if(material != null)
-                this.material = material;
-            else
-                throw new IllegalArgumentException("Material can't be null!");
+            this.material = geometry != null ? geometry.getMaterial() : null;
         }
-
-
 
         @Override
         public boolean equals(Object o) {

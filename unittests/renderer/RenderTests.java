@@ -34,7 +34,7 @@ class RenderTests {
                 .setAmbientLight(new AmbientLight(new Color(255, 191, 191)));
         scene.geometries //
                 .add(// center
-                        new Sphere(50d , new Point(0, 0, -100)),
+                        new Sphere(new Point(0, 0, -100), 50d),
                         // up left
                         new Triangle(new Point(-100, 0, -100), new Point(0, 100, -100), new Point(-100, 100, -100)),
                         // down left
@@ -58,19 +58,23 @@ class RenderTests {
      */
     @Test
     void renderMultiColorTest() {
-        Scene scene = new Scene("Multi color").setAmbientLight(new AmbientLight(new Color(51, 51, 51)));
+        Scene scene = new Scene("Multi color")
+                .setAmbientLight(new AmbientLight(new Color(WHITE)));
         scene.geometries //
                 .add(// center
-                        new Sphere( 50,new Point(0, 0, -100)),
+                        new Sphere(new Point(0, 0, -100), 50)
+                                .setMaterial(new Material().setKa(new Double3(0.4))),
                         // up left
                         new Triangle(new Point(-100, 0, -100), new Point(0, 100, -100), new Point(-100, 100, -100)) //
-                                .setEmission(new Color(GREEN)),
-                        // down left
+                                //.setEmission(new Color(GREEN))
+                                .setMaterial(new Material().setKa(new Double3(0, 0.8, 0))),                        // down left
                         new Triangle(new Point(-100, 0, -100), new Point(0, -100, -100), new Point(-100, -100, -100)) //
-                                .setEmission(new Color(RED)),
+                                //.setEmission(new Color(RED))
+                                .setMaterial(new Material().setKa(new Double3(0.8, 0, 0))),
                         // down right
                         new Triangle(new Point(100, 0, -100), new Point(0, -100, -100), new Point(100, -100, -100)) //
-                                .setEmission(new Color(BLUE)));
+                                //.setEmission(new Color(BLUE))
+                                .setMaterial(new Material().setKa(new Double3(0, 0, 0.8))));
 
         camera //
                 .setRayTracer(scene, RayTracerType.SIMPLE) //
