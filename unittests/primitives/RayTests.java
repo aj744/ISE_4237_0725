@@ -10,9 +10,29 @@ import primitives.Vector;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Unit tests for the {@link Ray} class.
+ * This class tests methods for point calculation along the ray
+ * and finding the closest point from a list to the ray's origin.
+ */
 public class RayTests {
+
+    /**
+     * Tests the {@link Ray#getPoint(double)} method.
+     * <p>
+     * Verifies that the method correctly returns a point on the ray
+     * given a scalar distance along the direction vector.
+     * </p>
+     * <br>
+     * <b>Test cases:</b>
+     * <ul>
+     *     <li>Distance = 1 (positive direction)</li>
+     *     <li>Distance = -1 (negative direction)</li>
+     *     <li>Distance = 0 (origin point)</li>
+     * </ul>
+     */
     @Test
-    public void testGetPoint(){
+    public void testGetPoint() {
         Ray ray = new Ray(Point.ZERO, new Vector(1, 0, 0));
         assertEquals(
                 new Point(1, 0, 0),
@@ -31,12 +51,24 @@ public class RayTests {
         );
     }
 
+    /**
+     * Tests the {@link Ray#findClosestPoint(List)} method.
+     * <p>
+     * Verifies that the method correctly finds the point closest to the ray's origin
+     * from a list of points, covering both equivalence and boundary test cases.
+     * </p>
+     * <br>
+     * <b>Test cases:</b>
+     * <ul>
+     *     <li>Middle point is the closest</li>
+     *     <li>First point is the closest</li>
+     *     <li>Last point is the closest</li>
+     * </ul>
+     */
     @Test
-
-    public void testFindClosestPoint()
-    {
+    public void testFindClosestPoint() {
         // ============ Equivalence Partitions Tests ==============
-        //EP01: return the middle point
+        // EP01: return the middle point
         List<Point> points1 = new ArrayList<>();
         Point p1 = new Point(0, 2, 0);
         Point p2 = new Point(0, 1, 0);
@@ -63,9 +95,17 @@ public class RayTests {
         points4.add(p3);
         points4.add(p2);
         isClosest(points4, ray, "The last point should be the closest", p2);
-
     }
-    public void isClosest(List<Point> points, Ray ray,String message , Point expected){
+
+    /**
+     * Helper method to assert the expected closest point found by the ray.
+     *
+     * @param points  List of {@link Point} to search in.
+     * @param ray     The {@link Ray} to compare distances from.
+     * @param message Message to display on assertion failure.
+     * @param expected The expected closest {@link Point}.
+     */
+    public void isClosest(List<Point> points, Ray ray, String message, Point expected) {
         assertNotNull(
                 points,
                 "the list should not be null"
@@ -76,7 +116,4 @@ public class RayTests {
                 message
         );
     }
-
-
-
 }

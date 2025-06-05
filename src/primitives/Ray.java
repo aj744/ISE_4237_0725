@@ -7,6 +7,7 @@ import java.util.Objects;
 
 /**
  * Represents a ray in 3D space, defined by a starting point and a direction vector.
+ * The direction vector is always normalized.
  */
 public class Ray {
     /**
@@ -15,26 +16,29 @@ public class Ray {
     private Vector vector;
 
     /**
-     * The starting point of the ray.
+     * The starting point (origin) of the ray.
      */
     private Point head;
 
     /**
-     * get method for direction
-     * @return the direction
+     * Returns the direction vector of the ray.
+     *
+     * @return the direction vector
      */
     public Vector getDirection() { return vector; }
 
     /**
-     * get method for point
-     * @return the base point
+     * Returns the starting point (origin) of the ray.
+     *
+     * @return the starting point
      */
     public Point getHead() { return head; }
 
     /**
+     * Calculates a point along the ray at a given distance 't' from the origin.
      *
-     * @param t
-     * @return
+     * @param t the distance along the ray (scalar)
+     * @return the point at distance 't' from the origin
      */
     public Point getPoint(double t) {
         if (Util.isZero(t)) return head;
@@ -42,7 +46,7 @@ public class Ray {
     }
 
     /**
-     * Constructs a Ray with a given direction vector and starting point.
+     * Constructs a Ray with a given starting point and direction vector.
      * The direction vector is automatically normalized.
      *
      * @param point  The starting point of the ray
@@ -71,6 +75,12 @@ public class Ray {
         return Objects.hash(vector, head);
     }
 
+    /**
+     * Finds the closest point to the ray's origin from a list of intersection points.
+     *
+     * @param intersections list of intersection points
+     * @return the closest point to the ray's origin, or null if the list is null or empty
+     */
     public Point findClosestPoint(List<Point> intersections) {
         return intersections == null ? null
                 : findClosestIntersection(
@@ -80,7 +90,12 @@ public class Ray {
         ).point;
     }
 
-
+    /**
+     * Finds the closest intersection to the ray's origin from a list of intersections.
+     *
+     * @param intersections list of intersections
+     * @return the closest intersection to the ray's origin, or null if the list is null or empty
+     */
     public Intersection findClosestIntersection(List<Intersection> intersections) {
         if(intersections == null || intersections.isEmpty()) {
             return null;
@@ -93,5 +108,4 @@ public class Ray {
         }
         return closest;
     }
-
 }

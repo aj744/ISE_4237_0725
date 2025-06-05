@@ -11,22 +11,40 @@ import primitives.*;
 import scene.Scene;
 
 /**
- * Test rendering a basic image
- * @author Dan
+ * Unit tests for rendering basic scenes using the rendering engine.
+ * <p>
+ * Includes simple tests for rendering scenes with spheres and triangles,
+ * with and without materials, colors and ambient lighting.
+ * </p>
+ *
+ * Author: Dan
  */
 class RenderTests {
-    /** Default constructor to satisfy JavaDoc generator */
+    /**
+     * Default constructor to satisfy JavaDoc generator.
+     */
     RenderTests() { /* to satisfy JavaDoc generator */ }
 
-    /** Camera builder of the tests */
+    /**
+     * Camera builder used for the test scenes.
+     * Initialized with:
+     * - location at origin
+     * - direction toward -Z axis
+     * - up direction as Y axis
+     * - view plane size: 500x500
+     * - view plane distance: 100
+     */
     private final Camera.Builder camera = Camera.getBuilder() //
             .setLocation(Point.ZERO).setDirection(new Point(0, 0, -1), Vector.AXIS_Y) //
             .setVpDistance(100) //
             .setVpSize(500, 500);
 
     /**
-     * Produce a scene with basic 3D model and render it into a png image with a
-     * grid
+     * Test rendering a basic scene with:
+     * - greenish background
+     * - a central sphere
+     * - three triangles placed around it (up-left, down-left, down-right)
+     * The image is saved as "Two color render test" and includes a yellow grid.
      */
     @Test
     void renderTwoColorTest() {
@@ -51,10 +69,15 @@ class RenderTests {
                 .writeToImage("Two color render test");
     }
 
-    // For stage 6 - please disregard in stage 5
     /**
-     * Produce a scene with basic 3D model - including individual lights of the
-     * bodies and render it into a png image with a grid
+     * Test rendering a scene with colored materials on the geometries instead of using emission.
+     * - Each triangle has a different material color (R, G, B)
+     * - Sphere has a diffuse grayish material
+     * - Scene includes white ambient light
+     * The image is saved as "color render test" and includes a white grid.
+     *
+     * Note: This test is relevant for stage 6 (lighting and materials),
+     *       not for stage 5.
      */
     @Test
     void renderMultiColorTest() {
@@ -67,7 +90,8 @@ class RenderTests {
                         // up left
                         new Triangle(new Point(-100, 0, -100), new Point(0, 100, -100), new Point(-100, 100, -100)) //
                                 //.setEmission(new Color(GREEN))
-                                .setMaterial(new Material().setKa(new Double3(0, 0.8, 0))),                        // down left
+                                .setMaterial(new Material().setKa(new Double3(0, 0.8, 0))),
+                        // down left
                         new Triangle(new Point(-100, 0, -100), new Point(0, -100, -100), new Point(-100, -100, -100)) //
                                 //.setEmission(new Color(RED))
                                 .setMaterial(new Material().setKa(new Double3(0.8, 0, 0))),
@@ -85,7 +109,14 @@ class RenderTests {
                 .writeToImage("color render test");
     }
 
-    /** Test for XML based scene - for bonus */
+    /**
+     * Bonus test for rendering a scene described using an XML file.
+     * <p>
+     * Currently this method creates an empty scene called "Using XML".
+     * The XML parsing logic should be added in the appropriate package (not here).
+     * </p>
+     * The rendered result is saved as "xml render test".
+     */
     @Test
     void basicRenderXml() {
         Scene scene = new Scene("Using XML");

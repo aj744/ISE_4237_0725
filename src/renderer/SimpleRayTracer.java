@@ -12,7 +12,8 @@ import static primitives.Util.isZero;
 
 /**
  * A simple implementation of a ray tracer that calculates the color
- * of a point based only on ambient light and closest intersection point.
+ * of a point based on ambient light and direct illumination from light sources.
+ * It supports diffuse and specular lighting effects based on the Phong reflection model.
  */
 public class SimpleRayTracer extends RayTracerBase {
 
@@ -41,14 +42,28 @@ public class SimpleRayTracer extends RayTracerBase {
         return calcColor(ray.findClosestIntersection(intersections), ray);
     }
 
+    /**
+     * Calculates the final color at the intersection point, including ambient and local effects.
+     *
+     * @param intersection the closest intersection point
+     * @param ray the original ray
+     * @return the resulting color
+     */
     private Color calcColor(Intersection intersection, Ray ray) {
         if (!preprocessIntersection(intersection, ray.getDirection())) {
             return Color.BLACK;
         }
         return scene
                 .ambientLight.getIntensity().scale(intersection.material.kA).add(calcColorLocalEffects(intersection));
-        }
+    }
 
+    /**
+     * Prepares intersection data including normal and view direction.
+     *
+     * @param intersection the intersection point
+     * @param vector the view direction
+     * @return true if the intersection is valid (not orthogonal to the view direction)
+     */
     public boolean preprocessIntersection(Intersection intersection, Vector vector) {
         intersection.v = vector;
         intersection.normal = intersection.geometry.getNormal(intersection.point);
@@ -57,6 +72,13 @@ public class SimpleRayTracer extends RayTracerBase {
         return !isZero(intersection.vNormal);
     }
 
+    /**
+     * Sets the light source and computes the light direction and its dot product with the normal.
+     *
+     * @param intersection the intersection point
+     * @param lightSource the light source
+     * @return true if the light and view directions are not orthogonal to the surface
+     */
     public boolean setLightSource(Intersection intersection, LightSource lightSource) {
         intersection.light = lightSource;
         intersection.l = intersection.light.getL(intersection.point);
@@ -65,6 +87,12 @@ public class SimpleRayTracer extends RayTracerBase {
         return !(isZero(intersection.vNormal) || isZero(intersection.lNormal));
     }
 
+    /**
+     * Calculates the local lighting effects (diffuse and specular) at the intersection point.
+     *
+     * @param intersection the intersection containing all necessary data
+     * @return the resulting color from local effects
+     */
     private Color calcColorLocalEffects(Intersection intersection) {
         Material material = intersection.geometry.getMaterial();
         Color color = intersection.geometry.getEmission();
@@ -83,6 +111,12 @@ public class SimpleRayTracer extends RayTracerBase {
         return color;
     }
 
+    /**
+     * Calculates the specular reflection component using the Phong model.
+     *
+     * @param intersection the intersection containing vectors and material
+     * @return the specular reflection coefficient
+     */
     private Double3 calcSpecular(Intersection intersection) {
         Vector r = intersection.l.subtract(intersection.normal.scale(2 * intersection.lNormal));
         double vr = -1 * intersection.v.dotProduct(r);
@@ -93,6 +127,7 @@ public class SimpleRayTracer extends RayTracerBase {
     /**
      * Calculates the diffuse reflection component at the intersection point
      * based on the Phong reflection model.
+     *
      * @param intersection the intersection data including normal and material
      * @return the diffuse reflection as a Double3 coefficient
      */

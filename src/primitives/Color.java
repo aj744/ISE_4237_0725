@@ -1,43 +1,52 @@
 package primitives;
 
 /**
- * Wrapper class for java.jwt.Color The constructors operate with any
- * non-negative RGB values. The colors are maintained without upper limit of
- * 255. Some additional operations are added that are useful for manipulating
- * light's colors
+ * Wrapper class for {@link java.awt.Color}.
+ * <p>
+ * This class allows working with RGB color components without the traditional upper bound of 255.
+ * It is used primarily for light color computations in rendering, where over-bright values are valid.
+ * Provides operations for scaling, adding, and converting colors.
+ * </p>
+ *
  * @author Dan Zilberstein
  */
 public class Color {
     /**
-     * The internal fields maintain RGB components as double numbers from 0 to
-     * whatever...
+     * The internal RGB representation using {@link Double3}.
+     * Each component (red, green, blue) can have any non-negative double value.
      */
-    private final Double3     rgb;
+    private final Double3 rgb;
 
-    /** Black color = (0,0,0) */
+    /** Constant representing the black color (0, 0, 0). */
     public static final Color BLACK = new Color();
 
-    /** Default constructor - to generate Black Color (privately) */
-    private Color() { rgb = Double3.ZERO; }
+    /**
+     * Private default constructor that initializes the color to black.
+     */
+    private Color() {
+        rgb = Double3.ZERO;
+    }
 
     /**
-     * Constructor to generate a color according to RGB components Each component
-     * in
-     * range 0..255 (for printed white color) or more [for lights]
-     * @param r Red component
-     * @param g Green component
-     * @param b Blue component
+     * Constructs a color from individual red, green, and blue components.
+     * Values must be non-negative.
+     *
+     * @param r red component
+     * @param g green component
+     * @param b blue component
+     * @throws IllegalArgumentException if any component is negative
      */
     public Color(double r, double g, double b) {
-        if (r < 0 || g < 0 || b < 0) throw new IllegalArgumentException("Negative color component is illegal");
+        if (r < 0 || g < 0 || b < 0)
+            throw new IllegalArgumentException("Negative color component is illegal");
         rgb = new Double3(r, g, b);
     }
 
     /**
-     * Constructor to generate a color according to RGB components Each component
-     * in
-     * range 0..255 (for printed white color) or more [for lights]
-     * @param rgb triad of Red/Green/Blue components
+     * Constructs a color from a {@link Double3} representing RGB components.
+     *
+     * @param rgb the RGB components
+     * @throws IllegalArgumentException if any component is negative
      */
     public Color(Double3 rgb) {
         if (rgb.d1() < 0 || rgb.d2() < 0 || rgb.d3() < 0)
@@ -46,27 +55,34 @@ public class Color {
     }
 
     /**
-     * Constructor on base of java.awt.Color object
-     * @param other java.awt.Color's source object
+     * Constructs a color from a {@link java.awt.Color} object.
+     *
+     * @param other a java.awt.Color object
      */
-    public Color(java.awt.Color other) { rgb = new Double3(other.getRed(), other.getGreen(), other.getBlue()); }
+    public Color(java.awt.Color other) {
+        rgb = new Double3(other.getRed(), other.getGreen(), other.getBlue());
+    }
 
     /**
-     * Color getter - returns the color after converting it into java.awt.Color
-     * object During the conversion any component bigger than 255 is set to 255
-     * @return java.awt.Color object based on this Color RGB components
+     * Converts this color to a {@link java.awt.Color} object.
+     * Any component value above 255 is clamped to 255.
+     *
+     * @return a java.awt.Color equivalent of this color
      */
     public java.awt.Color getColor() {
         int ir = (int) rgb.d1();
         int ig = (int) rgb.d2();
         int ib = (int) rgb.d3();
-        return new java.awt.Color(ir > 255 ? 255 : ir, ig > 255 ? 255 : ig, ib > 255 ? 255 : ib);
+        return new java.awt.Color(ir > 255 ? 255 : ir,
+                ig > 255 ? 255 : ig,
+                ib > 255 ? 255 : ib);
     }
 
     /**
-     * Operation of adding this and one or more other colors (by component)
-     * @param  colors one or more other colors to add
-     * @return        new Color object which is a result of the operation
+     * Adds one or more colors to this color component-wise.
+     *
+     * @param colors one or more {@link Color} objects to add
+     * @return a new {@link Color} representing the result
      */
     public Color add(Color... colors) {
         double rr = rgb.d1();
@@ -81,9 +97,11 @@ public class Color {
     }
 
     /**
-     * Scale the color by a scalar triad per rgb
-     * @param  k scale factor per rgb
-     * @return   new Color object which is the result of the operation
+     * Multiplies each color component by a corresponding scalar value.
+     *
+     * @param k a {@link Double3} representing scaling factors for each RGB component
+     * @return a new {@link Color} after scaling
+     * @throws IllegalArgumentException if any component of k is negative
      */
     public Color scale(Double3 k) {
         if (k.d1() < 0.0 || k.d2() < 0.0 || k.d3() < 0.0)
@@ -92,25 +110,33 @@ public class Color {
     }
 
     /**
-     * Scale the color by a scalar
-     * @param  k scale factor
-     * @return   new Color object which is the result of the operation
+     * Multiplies all color components by the same scalar value.
+     *
+     * @param k the scalar value
+     * @return a new {@link Color} after scaling
+     * @throws IllegalArgumentException if k is negative
      */
     public Color scale(double k) {
-        if (k < 0.0) throw new IllegalArgumentException("Can't scale a color by a negative number");
+        if (k < 0.0)
+            throw new IllegalArgumentException("Can't scale a color by a negative number");
         return new Color(rgb.scale(k));
     }
 
     /**
-     * Scale the color by (1 / reduction factor)
-     * @param  k reduction factor
-     * @return   new Color object which is the result of the operation
+     * Reduces each color component by dividing it with a given factor.
+     *
+     * @param k the reduction factor (must be ≥ 1)
+     * @return a new {@link Color} after reduction
+     * @throws IllegalArgumentException if k < 1
      */
     public Color reduce(int k) {
-        if (k < 1) throw new IllegalArgumentException("Can't scale a color by a by a number lower than 1");
+        if (k < 1)
+            throw new IllegalArgumentException("Can't scale a color by a number lower than 1");
         return new Color(rgb.reduce(k));
     }
 
     @Override
-    public String toString() { return "rgb:" + rgb; }
+    public String toString() {
+        return "rgb:" + rgb;
+    }
 }

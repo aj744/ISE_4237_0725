@@ -6,15 +6,24 @@ import java.util.List;
 
 /**
  * Represents a plane in 3D space, defined by a point and a normal vector.
+ * <p>
+ * A plane can be constructed either from one point and a normal vector,
+ * or from three points that define the plane uniquely.
+ * </p>
+ * <p>
+ * Extends {@link Geometry}, and thus supports emission color, material properties,
+ * and intersection calculation.
+ * </p>
  */
 public class Plane extends Geometry {
+
     /**
-     * the plane's point
+     * A point on the plane.
      */
     private final Point point;
 
     /**
-     * the normal vector to the plane
+     * The normal vector perpendicular to the plane.
      */
     private final Vector normal;
 
@@ -22,7 +31,7 @@ public class Plane extends Geometry {
      * Constructs a plane using a given point and a normal vector.
      *
      * @param point  A point on the plane.
-     * @param normal The normal vector of the plane.
+     * @param normal The normal vector of the plane (will be normalized).
      */
     public Plane(Point point, Vector normal) {
         this.point = point;
@@ -30,9 +39,9 @@ public class Plane extends Geometry {
     }
 
     /**
-     * Constructs a plane using three points in space.
+     * Constructs a plane using three non-collinear points in space.
      * <p>
-     * The normal is calculated using the cross product of two edge vectors.
+     * The normal is computed using the cross product of two edge vectors defined by the points.
      * </p>
      *
      * @param p1 The first point.
@@ -40,28 +49,39 @@ public class Plane extends Geometry {
      * @param p3 The third point.
      */
     public Plane(Point p1, Point p2, Point p3) {
-        this.normal = p2.subtract(p1).crossProduct(p2.subtract(p3)).normalize(); // get the normal with cross product
-        this.point = p2;
+        this.normal = p2.subtract(p1).crossProduct(p2.subtract(p3)).normalize(); // Compute normal vector
+        this.point = p2; // Any point on the plane is valid
     }
 
     /**
      * Returns the normal vector of the plane.
      * <p>
-     * Since a plane has a constant normal, the parameter is not used.
+     * Since the plane's normal is constant, the given point is ignored.
      * </p>
      *
-     * @param point A point on the plane (not used in this implementation).
-     * @return The normal vector of the plane.
+     * @param point A point on the plane (unused).
+     * @return The normalized normal vector of the plane.
      */
     @Override
     public Vector getNormal(Point point) {
         return normal;
     }
 
+    /**
+     * Returns the normal vector of the plane.
+     *
+     * @return the normalized normal vector of the plane.
+     */
     public Vector getNormal() {
         return normal;
     }
 
+    /**
+     * Computes the intersection point(s) between the plane and a given ray.
+     *
+     * @param ray the ray to intersect with the plane
+     * @return a list containing a single {@link Intersection} if found, or {@code null} if there is no intersection
+     */
     @Override
     public List<Intersection> calculateIntersectionsHelper(Ray ray) {
 
@@ -71,17 +91,19 @@ public class Plane extends Geometry {
             return null; // The ray is parallel to the plane
         }
 
-        if(ray.getHead().equals(point)) {
-            return null; // The ray starts on the plane
+        // Check if the ray starts on the plane
+        if (ray.getHead().equals(point)) {
+            return null;
         }
-        // Calculate the t value for the intersection point
+
+        // Calculate the t parameter for the intersection point
         double t = normal.dotProduct(point.subtract(ray.getHead())) / denominator;
         if (t <= 0) {
-            return null; // The intersection point is behind the ray's origin
+            return null; // The intersection is behind the ray's origin or at origin
         }
-        // Calculate the intersection point
+
+        // Return the intersection point
         Intersection intersection = new Intersection(this, ray.getPoint(t));
         return List.of(intersection);
     }
 }
-
