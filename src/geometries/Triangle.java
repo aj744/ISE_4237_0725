@@ -41,6 +41,12 @@ public class Triangle extends Polygon {
             return List.of(new Intersection(this, p));
         }
         // check if the point is on the edge of the triangle
+        if (vertices.get(0).subtract(vertices.get(1)).normalize().equals(vertices.get(0).subtract(p).normalize())
+                || vertices.get(1).subtract(vertices.get(2)).normalize().equals(vertices.get(1).subtract(p).normalize())
+                || vertices.get(2).subtract(vertices.get(0)).normalize().equals(vertices.get(2).subtract(p).normalize())
+        ){
+            return null;
+        }
 
         // Check if the point is inside the triangle using the cross product
         Vector v1 = vertices.get(0).subtract(p).normalize();

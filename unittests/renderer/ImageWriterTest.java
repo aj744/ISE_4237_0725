@@ -34,7 +34,7 @@ public class ImageWriterTest {
                     imageWriter.writePixel(j, i, red);
                 }
             }
-            imageWriter.writeToImage("yellowGrid");
         }
+        imageWriter.writeToImage("yellowGrid");
     }
 }

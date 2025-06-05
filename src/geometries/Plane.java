@@ -64,6 +64,7 @@ public class Plane extends Geometry {
 
     @Override
     public List<Intersection> calculateIntersectionsHelper(Ray ray) {
+
         // Check if the ray is parallel to the plane
         double denominator = normal.dotProduct(ray.getDirection());
         if (denominator == 0) {
@@ -75,7 +76,7 @@ public class Plane extends Geometry {
         }
         // Calculate the t value for the intersection point
         double t = normal.dotProduct(point.subtract(ray.getHead())) / denominator;
-        if (t < 0) {
+        if (t <= 0) {
             return null; // The intersection point is behind the ray's origin
         }
         // Calculate the intersection point

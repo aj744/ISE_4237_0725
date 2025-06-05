@@ -62,7 +62,7 @@ public class PlaneTests {
         );
 
         // TC02:If there is no intersections
-        final Vector v111 = new Vector(1, 1, 1);
+        final Vector v111 = new Vector(0, 1, 1);
         assertNull(plane.findIntersections(
                         new Ray(p122, v111)),
                 "There is no intersections"
@@ -79,16 +79,16 @@ public class PlaneTests {
         );
 
         //TC12: If the ray is included in the plane
-        final Point p022 = new Point(0, 2, 2);
+        final Point p222 = new Point(2, 2, 2);
         assertNull(
-                plane.findIntersections(new Ray(p022, v010)),
+                plane.findIntersections(new Ray(p122, v010)),
                 "is parallel and included"
         );
 
         // **** Group 2:
         // TC21:If the ray is not included in the plane
         assertNull(
-                plane.findIntersections(new Ray(p122, v100)),
+                plane.findIntersections(new Ray(p222, v100)),
                 "There is no intersections"
         );
 
