@@ -17,6 +17,8 @@ import static primitives.Util.isZero;
  */
 public class SimpleRayTracer extends RayTracerBase {
 
+    private static final double DELTA = 0.1;
+
     /**
      * Constructs a new SimpleRayTracer using the provided scene.
      *
@@ -101,11 +103,12 @@ public class SimpleRayTracer extends RayTracerBase {
                 continue;
             }
 
-            if (alignZero(intersection.lNormal * intersection.vNormal) > 0) { // sign(nl) == sign(nv)
+            if (alignZero(intersection.lNormal * intersection.vNormal) > 0 && unshaded(intersection)) { // sign(nl) == sign(nv)
                 Color iL = lightSource.getIntensity(intersection.point);
                 color = color.add(
                         iL.scale(calcDiffusive(intersection)
                                 .add(calcSpecular(intersection))));
+
             }
         }
         return color;
@@ -133,5 +136,26 @@ public class SimpleRayTracer extends RayTracerBase {
      */
     private Double3 calcDiffusive(Intersection intersection) {
         return intersection.material.kD.scale(Math.abs(intersection.lNormal));
+    }
+
+    private boolean unshaded(Intersection intersection){
+        Vector pointToLight = intersection.l.scale(-1);
+        Vector deltaVector = intersection.normal.scale(alignZero(intersection.lNormal) < 0 ? DELTA:-DELTA);
+
+        Point point = intersection.point.add(deltaVector);
+        Ray shadowRay = new Ray(point, pointToLight);
+
+        var intersections = scene.geometries.findIntersections(shadowRay);
+        if (intersections == null || intersections.isEmpty()) {
+            return true;
+        }
+
+        for (Point pointsOfIntersection : intersections) {
+            if (pointsOfIntersection.distanceSquared(pointToLight)
+                    < intersection.point.distanceSquared(pointToLight)){
+                return false;
+            }
+        }
+        return false;
     }
 }
