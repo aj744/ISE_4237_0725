@@ -41,8 +41,8 @@ public class Triangle extends Polygon {
      * @return A list containing the intersection if it exists, or {@code null} if there is no intersection.
      */
     @Override
-    public List<Intersection> calculateIntersectionsHelper(Ray ray) {
-        List<Intersection> intersections = plane.calculateIntersectionsHelper(ray);
+    public List<Intersection> calculateIntersectionsHelper(Ray ray, double maxDistance) {
+        List<Intersection> intersections = plane.calculateIntersectionsHelper(ray, maxDistance);
         if (intersections == null) {
             return null;
         }

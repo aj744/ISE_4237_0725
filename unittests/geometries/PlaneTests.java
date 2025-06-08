@@ -1,5 +1,6 @@
 package unittests.geometries;
 
+import geometries.Intersectable.Intersection;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import geometries.Plane;
@@ -123,6 +124,42 @@ public class PlaneTests {
         assertNull(
                 plane.findIntersections(new Ray(p133, v111)),
                 "There is no intersections"
+        );
+    }
+
+    @Test
+    public void testCalculateIntersections() {
+        Plane plane = new Plane(Point.ZERO, Vector.AXIS_Y);
+        final double maxDistance = 3.5;
+        //TC01: Max distance is too small to intersect the plane
+        assertNull(
+                plane.calculateIntersections(new Ray(new Point(0, -5, 0), Vector.AXIS_Y), maxDistance),
+                "The ray's point is too far away"
+        );
+
+        //TC02: The max distance is in big enough
+        List<Intersection> intersections = plane.calculateIntersections(
+                new Ray(new Point(0, -1, 0), Vector.AXIS_Y), maxDistance
+        );
+        assertNotNull(
+                intersections,
+                "The ray should intersect the plane"
+        );
+        assertEquals(
+                1,
+                intersections.size(),
+                "Wrong number of intersection"
+        );
+               assertEquals(
+                List.of(new Intersection(plane, Point.ZERO)),
+                intersections,
+                "Wrong Intersection point"
+        );
+
+        //TC03: The ray doesn't intersect the plane at all
+        assertNull(
+                plane.calculateIntersections(new Ray(new Point(0, 2, 0), Vector.AXIS_Y), maxDistance),
+                "The ray shouldn't cross the plane at all"
         );
     }
 }

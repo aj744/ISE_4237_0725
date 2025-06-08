@@ -4,6 +4,8 @@ import primitives.*;
 
 import java.util.List;
 
+import static primitives.Util.alignZero;
+
 /**
  * Represents a plane in 3D space, defined by a point and a normal vector.
  * <p>
@@ -83,7 +85,7 @@ public class Plane extends Geometry {
      * @return a list containing a single {@link Intersection} if found, or {@code null} if there is no intersection
      */
     @Override
-    public List<Intersection> calculateIntersectionsHelper(Ray ray) {
+    public List<Intersection> calculateIntersectionsHelper(Ray ray, double maxDistance) {
 
         // Check if the ray is parallel to the plane
         double denominator = normal.dotProduct(ray.getDirection());
@@ -103,7 +105,12 @@ public class Plane extends Geometry {
         }
 
         // Return the intersection point
-        Intersection intersection = new Intersection(this, ray.getPoint(t));
-        return List.of(intersection);
+        if (alignZero(t - maxDistance) <= 0) {
+            Intersection intersection = new Intersection(this, ray.getPoint(t));
+            return List.of(intersection);
+        }
+        else {
+            return null;
+        }
     }
 }

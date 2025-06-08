@@ -8,6 +8,8 @@ import primitives.Vector;
 import java.util.List;
 import java.util.ArrayList;
 
+import static primitives.Util.alignZero;
+
 /**
  * Represents a sphere in 3D space, defined by a center point and a radius.
  * <p>
@@ -51,7 +53,7 @@ public class Sphere extends RadialGeometry {
      * @return A list of {@link Intersection} points if intersections exist; {@code null} otherwise.
      */
     @Override
-    public List<Intersection> calculateIntersectionsHelper(Ray ray) {
+    public List<Intersection> calculateIntersectionsHelper(Ray ray, double maxDistance) {
 
         Point p0 = ray.getHead();
         Vector dir = ray.getDirection();
@@ -74,14 +76,14 @@ public class Sphere extends RadialGeometry {
         }
 
         double th = Math.sqrt(radius * radius - dSquared); // Distance from closest point to intersections
-        double t1 = Util.alignZero(tm - th); // First intersection distance from ray head
-        double t2 = Util.alignZero(tm + th); // Second intersection distance
+        double t1 = alignZero(tm - th); // First intersection distance from ray head
+        double t2 = alignZero(tm + th); // Second intersection distance
 
         List<Intersection> intersections = new ArrayList<>();
-        if (t1 > 0) {
+        if (t1 > 0 && alignZero(t1 - maxDistance) <= 0) {
             intersections.add(new Intersection(this, ray.getPoint(t1)));
         }
-        if (t2 > 0) {
+        if (t2 > 0 && alignZero(t2 - maxDistance) <= 0) {
             intersections.add(new Intersection(this, ray.getPoint(t2)));
         }
 

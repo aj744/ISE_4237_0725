@@ -112,7 +112,7 @@ public class Polygon extends Geometry {
      * @return {@code null} (no intersection logic implemented)
      */
     @Override
-    protected List<Intersection> calculateIntersectionsHelper(Ray ray) {
+    protected List<Intersection> calculateIntersectionsHelper(Ray ray, double maxDistance) {
         return null;
     }
 }

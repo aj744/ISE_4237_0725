@@ -60,10 +60,10 @@ public class Geometries extends Intersectable {
      * @return a list of {@link Intersection} points, or {@code null} if there are no intersections
      */
     @Override
-    protected List<Intersection> calculateIntersectionsHelper(Ray ray) {
+    protected List<Intersection> calculateIntersectionsHelper(Ray ray, double maxDistance) {
         List<Intersection> intersections = null;
         for (Intersectable geometry : this.geometries) {
-            List<Intersection> geometryIntersections = geometry.calculateIntersectionsHelper(ray);
+            List<Intersection> geometryIntersections = geometry.calculateIntersectionsHelper(ray, maxDistance);
             if (geometryIntersections != null) {
                 if (intersections == null) {
                     intersections = new LinkedList<>();

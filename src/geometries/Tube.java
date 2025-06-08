@@ -50,7 +50,7 @@ public class Tube extends RadialGeometry {
      * @return a list of intersection points (currently null)
      */
     @Override
-    public List<Intersection> calculateIntersectionsHelper(Ray ray) {
+    public List<Intersection> calculateIntersectionsHelper(Ray ray, double maxDistance) {
         return null;
     }
 }

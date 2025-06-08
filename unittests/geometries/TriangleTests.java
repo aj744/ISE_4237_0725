@@ -1,5 +1,6 @@
 package unittests.geometries;
 
+import geometries.Intersectable.Intersection;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import geometries.Triangle;
@@ -75,5 +76,42 @@ public class TriangleTests {
 
         // TC13
         assertNull(triangle.findIntersections(new Ray(p100, v010)), "no intersection point");
+    }
+
+    @Test
+    public void testCalculateIntersections() {
+        Triangle triangle = new Triangle(new Point(0, 0, 2), Point.ZERO, new Point(2, 0, 0));
+        final double maxDistance = 2;
+
+        //TC01 - max distance isnt enough
+        assertNull(
+                triangle.calculateIntersections(new Ray(new Point(0.5, -3, 0.5), Vector.AXIS_Y), maxDistance),
+                "no intersection point"
+        );
+
+        //TC02 - max distance is enough
+        List<Intersection> intersection = triangle.calculateIntersections(
+                new Ray(new Point(0.5, -1, 0.5), Vector.AXIS_Y), maxDistance
+        );
+        assertNotNull(
+                intersection,
+                "wrong number of intersections"
+        );
+        assertEquals(
+                1,
+                intersection.size(),
+                "wrong number of intersections"
+        );
+        assertEquals(
+                List.of(new Intersection(triangle, new Point(0.5, 0, 0.5))),
+                intersection,
+                "wrong point"
+        );
+
+        //TC03 - ray doesnt intersect
+        assertNull(
+                triangle.calculateIntersections(new Ray(new Point(0.5, 3, 0.5), Vector.AXIS_Y), maxDistance),
+                "no intersection"
+        );
     }
 }

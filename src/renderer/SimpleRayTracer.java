@@ -143,7 +143,8 @@ public class SimpleRayTracer extends RayTracerBase {
         Vector deltaVector = intersection.normal.scale(intersection.lNormal < 0 ? DELTA : -DELTA);
         Point point = intersection.point.add(deltaVector);
         Ray lightRay = new Ray(point, pointToLight);
-        var intersections = scene.geometries.findIntersections(lightRay);
+        var intersections =
+                scene.geometries.calculateIntersections(lightRay, intersection.light.getDistance(intersection.point));
         return intersections == null||intersections.isEmpty() ;
     }
 }

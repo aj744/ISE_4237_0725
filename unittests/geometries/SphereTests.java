@@ -1,5 +1,6 @@
 package unittests.geometries;
 
+import geometries.Intersectable.Intersection;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import geometries.Sphere;
@@ -158,5 +159,67 @@ public class SphereTests {
         // TC42: Ray starts inside, ray is orthogonal to start-center line
         final var result8 = sphere.findIntersections(new Ray(p500, v001));
         assertNotNull(result8, "Can't be empty list");
+    }
+
+    @Test
+    public void testCalculateIntersection() {
+        Sphere sphere = new Sphere(Point.ZERO, 1);
+        final double maxDistance = 1;
+
+        //TC01: max distance not enough for 1st intersection
+        assertNull(
+                sphere.calculateIntersections(new Ray(new Point(-3, 0, 0), Vector.AXIS_X), maxDistance),
+                "no intersection"
+        );
+
+        //TC02: max distance is enough for 1st intersection
+        List<Intersection> intersections = sphere.calculateIntersections(
+                new Ray(new Point(-1.5, 0, 0), Vector.AXIS_X), maxDistance
+        );
+        assertNotNull(
+                intersections,
+                "there's an intersection"
+        );
+        assertEquals(
+                1,
+                intersections.size(),
+                "wrong amount of intersections"
+        );
+        assertEquals(
+                List.of(new Intersection(sphere, new Point(-1, 0, 0))),
+                intersections,
+                "wrong intersection point"
+        );
+
+
+        //TC01: after 1st but max distance not enough for 2nd intersection
+        assertNull(
+                sphere.calculateIntersections(new Ray(new Point(-0.5, 0, 0), Vector.AXIS_X), maxDistance),
+                "no intersection"
+        );
+
+        //TC02: max distance is enough for 2nd intersection
+        intersections = sphere.calculateIntersections(
+                new Ray(new Point(0.5, 0, 0), Vector.AXIS_X), maxDistance
+        );
+        assertNotNull(
+                intersections,
+                "there's an intersection"
+        );
+        assertEquals(
+                1,
+                intersections.size(),
+                "wrong amount of intersections"
+        );
+        assertEquals(
+                List.of(new Intersection(sphere, new Point(1, 0, 0))),
+                intersections,
+                "wrong intersection point"
+        );
+
+        assertNull(
+                sphere.calculateIntersections(new Ray(new Point(2, 0, 0), Vector.AXIS_X), maxDistance),
+                "no intersection"
+        );
     }
 }

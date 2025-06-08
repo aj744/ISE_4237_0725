@@ -85,7 +85,7 @@ public abstract class Intersectable {
         @Override
         public boolean equals(Object o) {
             if (!(o instanceof Intersection intersection)) return false;
-            return geometry == ((Intersection) o).geometry && Objects.equals(o, this.point);
+            return geometry == ((Intersection) o).geometry && Objects.equals(((Intersection) o).point, this.point);
         }
 
         @Override
@@ -106,14 +106,18 @@ public abstract class Intersectable {
                 : list.stream().map(intersection -> intersection.point).toList();
     }
 
+    public final List<Intersection> calculateIntersections(Ray ray) {
+        return calculateIntersectionsHelper(ray, Double.POSITIVE_INFINITY);
+    }
+
     /**
      * Calculates all intersection data between the ray and the object.
      *
      * @param ray the ray to intersect with
      * @return a list of {@link Intersection} records, or {@code null} if no intersections
      */
-    public final List<Intersection> calculateIntersections(Ray ray) {
-        return calculateIntersectionsHelper(ray);
+    public final List<Intersection> calculateIntersections(Ray ray, double maxDistance) {
+        return calculateIntersectionsHelper(ray, maxDistance);
     }
 
     /**
@@ -125,5 +129,5 @@ public abstract class Intersectable {
      * @param ray the ray to intersect with
      * @return a list of intersections, or {@code null} if none are found
      */
-    protected abstract List<Intersection> calculateIntersectionsHelper(Ray ray);
+    protected abstract List<Intersection> calculateIntersectionsHelper(Ray ray, double maxDistance);
 }
