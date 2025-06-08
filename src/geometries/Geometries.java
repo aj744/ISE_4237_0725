@@ -36,21 +36,6 @@ public class Geometries extends Intersectable {
         this.geometries.addAll(Arrays.asList(geometries));
     }
 
-    /*
-    @Override
-    public List<Intersection> findIntersections(Ray ray) {
-        List<Point> intersections = null;
-        for (Intersectable geometry : this.geometries) {
-            List<Point> geometryIntersections = geometry.findIntersections(ray);
-            if (geometryIntersections != null) {
-                if (intersections == null) {
-                    intersections = new LinkedList<>();
-                }
-                intersections.addAll(geometryIntersections);
-            }
-        }
-        return intersections;
-    }*/
 
     /**
      * Helper method that calculates all intersections between the given {@code ray}

@@ -18,6 +18,9 @@ import static primitives.Util.isZero;
 public class SimpleRayTracer extends RayTracerBase {
 
     private static final double DELTA = 0.1;
+    private static final int MAX_CALC_COLOR_LEVEL = 10;
+    private static final double MIN_CALC_COLOR_K = 0.001;
+    private static final Double3 INITIAL_K = Double3.ONE;
 
     /**
      * Constructs a new SimpleRayTracer using the provided scene.
@@ -37,11 +40,11 @@ public class SimpleRayTracer extends RayTracerBase {
      */
     @Override
     public Color traceRay(Ray ray) {
-        List<Intersection> intersections = scene.geometries.calculateIntersections(ray);
-        if (intersections == null) {
+        Intersection intersection = findClosestIntersection(ray);
+        if (intersection == null) {
             return scene.background;
         }
-        return calcColor(ray.findClosestIntersection(intersections), ray);
+        return calcColor(intersection, ray);
     }
 
     /**
@@ -56,8 +59,14 @@ public class SimpleRayTracer extends RayTracerBase {
             return Color.BLACK;
         }
         return scene
-                .ambientLight.getIntensity().scale(intersection.material.kA).add(calcColorLocalEffects(intersection));
+                .ambientLight.getIntensity().scale(intersection.material.kA)
+                .add(calcColor(intersection, MAX_CALC_COLOR_LEVEL, INITIAL_K));
     }
+
+    private Color calcColor(Intersection intersection, int level, Double3 k) {
+        return calcColorLocalEffects(intersection);
+    }
+
 
     /**
      * Prepares intersection data including normal and view direction.
@@ -146,5 +155,31 @@ public class SimpleRayTracer extends RayTracerBase {
         var intersections =
                 scene.geometries.calculateIntersections(lightRay, intersection.light.getDistance(intersection.point));
         return intersections == null||intersections.isEmpty() ;
+    }
+
+    private Ray constractRefractedRay(Intersection intersection, Ray ray) {
+        return new Ray(intersection.point, ray.getDirection());
+    }
+
+    private Ray constractReflectedRay(Intersection intersection, Ray ray) {
+        Vector v = ray.getDirection();
+        Vector n = intersection.normal;
+        double vn = v.dotProduct(n);
+        return new Ray(intersection.point, v.subtract(n.scale(2 * vn)));
+    }
+
+    private Color calcGlobalEffect(Ray ray, Double3 kx, int level, Double3 k) {
+        Double3 kkx = kx.product(k);
+        if (kkx.lowerThan(MIN_CALC_COLOR_K)) {
+            return Color.BLACK;
+        }
+        Intersection intersection = findClosestIntersection(ray);
+        if (intersection == null) return scene.background;
+        return calcColor(intersection, level - 1, kkx).scale(kx);
+    }
+
+    private Intersection findClosestIntersection(Ray ray) {
+        List<Intersection> intersections = scene.geometries.calculateIntersections(ray);
+        return intersections == null ? null : ray.findClosestIntersection(intersections);
     }
 }
