@@ -138,24 +138,12 @@ public class SimpleRayTracer extends RayTracerBase {
         return intersection.material.kD.scale(Math.abs(intersection.lNormal));
     }
 
-    private boolean unshaded(Intersection intersection){
+    private boolean unshaded(Intersection intersection) {
         Vector pointToLight = intersection.l.scale(-1);
-        Vector deltaVector = intersection.normal.scale(alignZero(intersection.lNormal) < 0 ? DELTA:-DELTA);
-
+        Vector deltaVector = intersection.normal.scale(intersection.lNormal < 0 ? DELTA : -DELTA);
         Point point = intersection.point.add(deltaVector);
-        Ray shadowRay = new Ray(point, pointToLight);
-
-        var intersections = scene.geometries.findIntersections(shadowRay);
-        if (intersections == null || intersections.isEmpty()) {
-            return true;
-        }
-
-        for (Point pointsOfIntersection : intersections) {
-            if (pointsOfIntersection.distanceSquared(pointToLight)
-                    < intersection.point.distanceSquared(pointToLight)){
-                return false;
-            }
-        }
-        return false;
+        Ray lightRay = new Ray(point, pointToLight);
+        var intersections = scene.geometries.findIntersections(lightRay);
+        return intersections == null||intersections.isEmpty() ;
     }
 }
