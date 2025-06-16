@@ -4,12 +4,19 @@ import geometries.Intersectable.Intersection;
 
 import java.util.List;
 import java.util.Objects;
+import primitives.Util.*;
+
+import static primitives.Util.isZero;
 
 /**
  * Represents a ray in 3D space, defined by a starting point and a direction vector.
  * The direction vector is always normalized.
  */
 public class Ray {
+    /**
+     * distance for moving the head point
+     */
+    private static final double DELTA = 0.1;
     /**
      * The direction vector of the ray. It is always normalized.
      */
@@ -41,7 +48,7 @@ public class Ray {
      * @return the point at distance 't' from the origin
      */
     public Point getPoint(double t) {
-        if (Util.isZero(t)) return head;
+        if (isZero(t)) return head;
         return head.add(vector.scale(t));
     }
 
@@ -55,6 +62,20 @@ public class Ray {
     public Ray(Point point, Vector vector) {
         this.vector = vector.normalize(); // Ensure the direction vector is normalized
         this.head = point;
+    }
+
+    public Ray(Point point, Vector direction, Vector normal) {
+        this.vector = direction;
+        double vn = direction.dotProduct(normal);
+        if (isZero(vn)) {
+            this.head = point;
+        }
+        else if (vn > 0) {
+            this.head = point.add(normal.scale(DELTA));
+        }
+        else {
+            this.head = point.add(normal.scale(-DELTA));
+        }
     }
 
     @Override
