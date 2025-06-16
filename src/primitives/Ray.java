@@ -69,6 +69,13 @@ public class Ray {
         this.head = point;
     }
 
+    /**
+     * Constructs a Ray with a small shift in the head point along the normal to prevent precision issues.
+     *
+     * @param point    The starting point of the ray
+     * @param direction The direction vector of the ray
+     * @param normal    The normal vector to determine the shift direction
+     */
     public Ray(Point point, Vector direction, Vector normal) {
         this.vector = direction.normalize();
         double vn = direction.dotProduct(normal);
