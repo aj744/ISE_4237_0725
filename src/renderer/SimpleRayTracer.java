@@ -62,7 +62,7 @@ public class SimpleRayTracer extends RayTracerBase {
     }
 
     private Color calcColor(Intersection intersection, int level, Double3 k) {
-        Color color = calcLocalEffects(intersection);
+        Color color = calcLocalEffects(intersection, k);
         return 1 == level ? color : color.add(calcGlobalEffects(intersection, level, k));
     }
 
@@ -103,7 +103,7 @@ public class SimpleRayTracer extends RayTracerBase {
      * @param intersection the intersection containing all necessary data
      * @return the resulting color from local effects
      */
-    private Color calcLocalEffects(Intersection intersection) {
+    private Color calcLocalEffects(Intersection intersection, Double3 k) {
         Material material = intersection.geometry.getMaterial();
         Color color = intersection.geometry.getEmission();
         for (LightSource lightSource : scene.lights) {
@@ -111,7 +111,8 @@ public class SimpleRayTracer extends RayTracerBase {
                 continue;
             }
 
-            if (alignZero(intersection.lNormal * intersection.vNormal) > 0 && unshaded(intersection)) { // sign(nl) == sign(nv)
+            if (alignZero(intersection.lNormal * intersection.vNormal) > 0 && unshaded(intersection)
+                && !k.lowerThan(MIN_CALC_COLOR_K)) { // sign(nl) == sign(nv)
                 Color iL = lightSource.getIntensity(intersection.point);
                 color = color.add(
                         iL.scale(calcDiffusive(intersection)
@@ -183,5 +184,21 @@ public class SimpleRayTracer extends RayTracerBase {
     private Intersection findClosestIntersection(Ray ray) {
         List<Intersection> intersections = scene.geometries.calculateIntersections(ray);
         return intersections == null ? null : ray.findClosestIntersection(intersections);
+    }
+
+    private Double3 transparency(Intersection intersection){
+        Ray lightRay = new Ray(intersection.point, intersection.l.scale(-1), intersection.normal);
+        List<Intersection> intersections =
+                scene.geometries.calculateIntersections(lightRay, intersection.light.getDistance(intersection.point));
+        if (intersections == null) return Double3.ONE;
+
+        Double3 ktr = Double3.ONE;
+        for (Intersection i : intersections) {
+            ktr = ktr.product(i.geometry.getMaterial().kT);
+
+            // If the intensity of the light ray is too small, the object is opaque
+            if (ktr.lowerThan(MIN_CALC_COLOR_K)) return Double3.ZERO;
+        }
+        return ktr;
     }
 }

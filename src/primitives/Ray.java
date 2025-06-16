@@ -49,7 +49,12 @@ public class Ray {
      */
     public Point getPoint(double t) {
         if (isZero(t)) return head;
-        return head.add(vector.scale(t));
+        try {
+            return head.add(vector.scale(t));
+        }
+        catch(IllegalArgumentException e) {
+            return head;
+        }
     }
 
     /**
@@ -65,16 +70,13 @@ public class Ray {
     }
 
     public Ray(Point point, Vector direction, Vector normal) {
-        this.vector = direction;
+        this.vector = direction.normalize();
         double vn = direction.dotProduct(normal);
-        if (isZero(vn)) {
+        // Add a small delta to the ray's origin to avoid floating-point precision issues
+        if (!Util.isZero(vn)) {
+            this.head = point.add(normal.scale(vn > 0 ? DELTA : -DELTA));
+        } else {
             this.head = point;
-        }
-        else if (vn > 0) {
-            this.head = point.add(normal.scale(DELTA));
-        }
-        else {
-            this.head = point.add(normal.scale(-DELTA));
         }
     }
 
