@@ -71,7 +71,7 @@ public class SimpleRayTracer extends RayTracerBase {
      * Prepares intersection data including normal and view direction.
      *
      * @param intersection the intersection point
-     * @param vector the view direction
+     * @param vector       the view direction
      * @return true if the intersection is valid (not orthogonal to the view direction)
      */
     public boolean preprocessIntersection(Intersection intersection, Vector vector) {
@@ -86,7 +86,7 @@ public class SimpleRayTracer extends RayTracerBase {
      * Sets the light source and computes the light direction and its dot product with the normal.
      *
      * @param intersection the intersection point
-     * @param lightSource the light source
+     * @param lightSource  the light source
      * @return true if the light and view directions are not orthogonal to the surface
      */
     public boolean setLightSource(Intersection intersection, LightSource lightSource) {
@@ -117,7 +117,6 @@ public class SimpleRayTracer extends RayTracerBase {
                 color = color.add(
                         iL.scale(calcDiffusive(intersection)
                                 .add(calcSpecular(intersection))));
-
             }
         }
         return color;
@@ -132,7 +131,6 @@ public class SimpleRayTracer extends RayTracerBase {
     private Double3 calcSpecular(Intersection intersection) {
         Vector r = intersection.l.subtract(intersection.normal.scale(2 * intersection.lNormal));
         double vr = -1 * intersection.v.dotProduct(r);
-
         return intersection.material.kS.scale(Math.pow(Math.max(0, vr), intersection.material.nShininess));
     }
 
@@ -153,13 +151,12 @@ public class SimpleRayTracer extends RayTracerBase {
      * @param intersection the intersection to check
      * @return true if unshaded, false otherwise
      */
-/*
     private boolean unshaded(Intersection intersection) {
         Vector pointToLight = intersection.l.scale(-1);
         Ray lightRay = new Ray(intersection.point, pointToLight, intersection.normal);
         var intersections =
                 scene.geometries.calculateIntersections(lightRay, intersection.light.getDistance(intersection.point));
-        return intersections == null||intersections.isEmpty() ;
+        return intersections == null || intersections.isEmpty();
     }
 
     private Ray constructRefractedRay(Intersection intersection) {
@@ -175,9 +172,9 @@ public class SimpleRayTracer extends RayTracerBase {
 
     private Color calcGlobalEffects(Intersection intersection, int level, Double3 k) {
         return calcColorGlobalEffect(constructRefractedRay(intersection),
-            level, k, intersection.material.kT)
-            .add(calcColorGlobalEffect(constructReflectedRay(intersection),
-                    level, k, intersection.material.kR));
+                level, k, intersection.material.kT)
+                .add(calcColorGlobalEffect(constructReflectedRay(intersection),
+                        level, k, intersection.material.kR));
     }
     private Color calcColorGlobalEffect(Ray ray, int level, Double3 k, Double3 kx) {
         Double3 kkx = k.product(kx);
@@ -193,7 +190,13 @@ public class SimpleRayTracer extends RayTracerBase {
         return intersections == null ? null : ray.findClosestIntersection(intersections);
     }
 
-    private Double3 transparency(Intersection intersection){
+    /**
+     * Calculates the transparency factor along the path from the point to the light source.
+     *
+     * @param intersection the intersection point
+     * @return the transparency coefficient (ktr)
+     */
+    private Double3 transparency(Intersection intersection) {
         Ray lightRay = new Ray(intersection.point, intersection.l.scale(-1), intersection.normal);
         List<Intersection> intersections =
                 scene.geometries.calculateIntersections(lightRay, intersection.light.getDistance(intersection.point));
