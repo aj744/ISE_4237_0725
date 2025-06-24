@@ -104,16 +104,15 @@ public class SimpleRayTracer extends RayTracerBase {
      * @return the resulting color from local effects
      */
     private Color calcLocalEffects(Intersection intersection, Double3 k) {
-        Material material = intersection.geometry.getMaterial();
         Color color = intersection.geometry.getEmission();
         for (LightSource lightSource : scene.lights) {
             if (!setLightSource(intersection, lightSource)) {
                 continue;
             }
 
-            if (alignZero(intersection.lNormal * intersection.vNormal) > 0 && unshaded(intersection)
-                    && !k.lowerThan(MIN_CALC_COLOR_K)) { // sign(nl) == sign(nv)
-                Color iL = lightSource.getIntensity(intersection.point);
+            Double3 ktr = transparency(intersection);
+            if (!ktr.product(k).lowerThan(MIN_CALC_COLOR_K) ) { // sign(nl) == sign(nv)
+                Color iL = lightSource.getIntensity(intersection.point).scale(ktr);
                 color = color.add(
                         iL.scale(calcDiffusive(intersection)
                                 .add(calcSpecular(intersection))));
@@ -151,12 +150,26 @@ public class SimpleRayTracer extends RayTracerBase {
      * @param intersection the intersection to check
      * @return true if unshaded, false otherwise
      */
+
     private boolean unshaded(Intersection intersection) {
         Vector pointToLight = intersection.l.scale(-1);
         Ray lightRay = new Ray(intersection.point, pointToLight, intersection.normal);
         var intersections =
                 scene.geometries.calculateIntersections(lightRay, intersection.light.getDistance(intersection.point));
-        return intersections == null || intersections.isEmpty();
+
+        if (intersections == null || intersections.isEmpty()) {
+            return true; // No obstructions, fully unshaded
+        }
+
+        // Check if any intersection actually blocks the light (not transparent)
+        for (Intersection obstruction : intersections) {
+            // If the obstructing object is not fully transparent, it blocks some light
+            if (obstruction.material.kT.lowerThan(MIN_CALC_COLOR_K)) {
+                return false; // Object is opaque enough to cast shadow
+            }
+        }
+
+        return true; // All obstructions are transparent enough
     }
 
     private Ray constructRefractedRay(Intersection intersection) {
@@ -164,10 +177,8 @@ public class SimpleRayTracer extends RayTracerBase {
     }
 
     private Ray constructReflectedRay(Intersection intersection) {
-        Vector v = intersection.v;
-        Vector n = intersection.normal;
-        double vn = v.dotProduct(n);
-        return new Ray(intersection.point, v.subtract(n.scale(2 * vn)));
+        Vector r = intersection.v.add(intersection.normal.scale(intersection.vNormal * -2));
+        return new Ray(intersection.point, r, intersection.normal);
     }
 
     private Color calcGlobalEffects(Intersection intersection, int level, Double3 k) {
@@ -200,14 +211,14 @@ public class SimpleRayTracer extends RayTracerBase {
         Ray lightRay = new Ray(intersection.point, intersection.l.scale(-1), intersection.normal);
         List<Intersection> intersections =
                 scene.geometries.calculateIntersections(lightRay, intersection.light.getDistance(intersection.point));
-        if (intersections == null) return Double3.ONE;
 
         Double3 ktr = Double3.ONE;
-        for (Intersection i : intersections) {
-            ktr = ktr.product(i.geometry.getMaterial().kT);
+        if (intersections == null) return ktr;
 
-            // If the intensity of the light ray is too small, the object is opaque
-            if (ktr.lowerThan(MIN_CALC_COLOR_K)) return Double3.ZERO;
+        for (Intersection i : intersections) {
+            if (i.material.kT.lowerThan(MIN_CALC_COLOR_K))
+                return Double3.ZERO;
+            ktr = ktr.product(i.material.kT);
         }
         return ktr;
     }
