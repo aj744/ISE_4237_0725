@@ -84,6 +84,102 @@ public class Camera implements Cloneable {
         final Camera camera = new Camera();
 
         /**
+         * Point that the camera is currently targeting/looking at.
+         * Used to maintain focus when moving the camera.
+         */
+        private Point targetPoint;
+
+        /**
+         * Moves the camera by the specified displacement vector while keeping it focused
+         * on the same target point it was previously looking at.
+         *
+         * @param displacement Vector specifying how much to move the camera location
+         * @return this Builder instance (for method chaining)
+         * @throws IllegalStateException if camera location or target point is not set
+         */
+        public Builder moveCamera(Vector displacement) {
+            if (camera.location == null) {
+                throw new IllegalStateException("Camera location must be set before moving");
+            }
+            if (targetPoint == null) {
+                throw new IllegalStateException("Target point must be set before moving camera");
+            }
+
+            // Move the camera location
+            camera.location = camera.location.add(displacement);
+
+            // Recalculate direction vectors to keep looking at the same target point
+            camera.to = targetPoint.subtract(camera.location).normalize();
+
+            // Preserve the current up vector if it exists, otherwise use global Y-axis
+            Vector currentUp = (camera.up != null) ? camera.up : Vector.AXIS_Y;
+
+            // Recalculate right and up vectors to maintain proper orthogonal orientation
+            camera.right = camera.to.crossProduct(currentUp).normalize();
+            camera.up = camera.right.crossProduct(camera.to).normalize();
+
+            return this;
+        }
+
+        /**
+         * Sets the target point that the camera should look at.
+         * This point will be preserved when moving the camera.
+         *
+         * @param target The point the camera should focus on
+         * @return this Builder instance (for method chaining)
+         */
+        public Builder setTargetPoint(Point target) {
+            this.targetPoint = target;
+            return this;
+        }
+
+        /**
+         * Gets the current target point.
+         *
+         * @return the target point, or null if not set
+         */
+        public Point getTargetPoint() {
+            return targetPoint;
+        }
+
+        public Builder rotateCamera(int degrees) {
+            if (camera.to == null) {
+                throw new IllegalStateException("Camera 'to' vector must be set before rotating");
+            }
+            if (camera.up == null) {
+                throw new IllegalStateException("Camera 'up' vector must be set before rotating");
+            }
+            if (camera.right == null) {
+                throw new IllegalStateException("Camera 'right' vector must be set before rotating");
+            }
+
+            // Convert degrees to radians
+            double radians = Math.toRadians(degrees);
+            double cosTheta = Math.cos(radians);
+            double sinTheta = Math.sin(radians);
+
+            // Store current up and right vectors
+            Vector currentUp = camera.up;
+            Vector currentRight = camera.right;
+
+            // Simple 2D rotation in the plane perpendicular to "to" vector
+            // Since up and right are orthogonal and both perpendicular to "to",
+            // we can treat this as a 2D rotation in the up-right plane
+
+            // new_up = up*cos(θ) - right*sin(θ)
+            // new_right = up*sin(θ) + right*cos(θ)
+
+            Vector newUp = currentUp.scale(cosTheta).add(currentRight.scale(-sinTheta));
+            Vector newRight = currentUp.scale(sinTheta).add(currentRight.scale(cosTheta));
+
+            // Normalize to ensure unit vectors (should already be unit, but ensure precision)
+            camera.up = newUp.normalize();
+            camera.right = newRight.normalize();
+
+            return this;
+        }
+
+        /**
          * Sets the camera's location in space.
          * @param location The 3D point representing the camera location.
          * @return this Builder instance (for method chaining).
@@ -122,6 +218,8 @@ public class Camera implements Cloneable {
             camera.to = to.normalize();
             camera.right = to.crossProduct(up).normalize();
             camera.up = camera.right.crossProduct(camera.to).normalize();
+
+            targetPoint = target;
             return this;
         }
 
@@ -136,6 +234,8 @@ public class Camera implements Cloneable {
             camera.up = Vector.AXIS_Y;
             camera.right = camera.to.crossProduct(camera.up).normalize();
             camera.up = camera.right.crossProduct(camera.to).normalize();
+
+            targetPoint = target;
             return this;
         }
 
