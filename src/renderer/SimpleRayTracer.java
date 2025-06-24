@@ -94,7 +94,7 @@ public class SimpleRayTracer extends RayTracerBase {
         intersection.l = intersection.light.getL(intersection.point);
         intersection.lNormal = intersection.l.dotProduct(intersection.normal);
 
-        return !(isZero(intersection.vNormal) || isZero(intersection.lNormal));
+        return Util.alignZero(intersection.vNormal * intersection.lNormal) > 0;
     }
 
     /**
