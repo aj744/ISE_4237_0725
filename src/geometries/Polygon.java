@@ -113,6 +113,52 @@ public class Polygon extends Geometry {
      */
     @Override
     protected List<Intersection> calculateIntersectionsHelper(Ray ray, double maxDistance) {
-        return null;
+        // First, find intersections with the infinite plane
+        List<Intersection> planeIntersections = plane.calculateIntersections(ray, maxDistance);
+
+        // If no intersection with the plane, no intersection with the polygon
+        if (planeIntersections == null || planeIntersections.isEmpty()) {
+            return null;
+        }
+
+        // Get the intersection point on the plane
+        Point intersectionPoint = planeIntersections.getFirst().point;
+
+        // Check if the intersection point is inside the polygon
+        Vector normal = plane.getNormal(intersectionPoint);
+
+        // Use the same convexity check logic as in the constructor
+        // Check that the point is on the correct side of all edges
+        boolean positive = false;
+        boolean firstEdge = true;
+
+        for (int i = 0; i < size; i++) {
+            Point v1 = vertices.get(i);
+            Point v2 = vertices.get((i + 1) % size); // Next vertex (wrapping around)
+
+            // Edge vector from v1 to v2
+            Vector edge = v2.subtract(v1);
+
+            // Vector from v1 to intersection point
+            Vector toPoint = intersectionPoint.subtract(v1);
+
+            // Cross product to determine which side of the edge the point is on
+            Vector cross = edge.crossProduct(toPoint);
+            double dotProduct = cross.dotProduct(normal);
+
+            // For the first edge, establish the expected sign
+            if (firstEdge) {
+                positive = dotProduct > 0;
+                firstEdge = false;
+            }
+
+            // If the sign is different from expected, point is outside
+            if (isZero(dotProduct) || (positive != (dotProduct > 0))) {
+                return null; // Point is outside the polygon or on an edge
+            }
+        }
+
+        // If we reach here, the intersection point is inside the polygon
+        return List.of(new Intersection(this, planeIntersections.getFirst().point));
     }
 }

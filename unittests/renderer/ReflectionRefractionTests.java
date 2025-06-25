@@ -9,6 +9,8 @@ import lighting.*;
 import primitives.*;
 import scene.Scene;
 
+import java.util.List;
+
 /**
  * Tests for reflection and transparency functionality, test for partial
  * shadows

@@ -1,6 +1,8 @@
 package renderer;
 
 import geometries.Intersectable.Intersection;
+import geometries.Polygon;
+import geometries.Sphere;
 import lighting.LightSource;
 import primitives.*;
 import scene.Scene;
@@ -56,6 +58,9 @@ public class SimpleRayTracer extends RayTracerBase {
     private Color calcColor(Intersection intersection, Ray ray) {
         if (!preprocessIntersection(intersection, ray.getDirection())) {
             return Color.BLACK;
+        }
+        if (intersection.geometry instanceof Polygon) {
+            System.out.println("s");
         }
         return calcColor(intersection, MAX_CALC_COLOR_LEVEL, INITIAL_K)
                 .add(scene.ambientLight.getIntensity().scale(intersection.material.kA));

@@ -142,6 +142,11 @@ public class Camera implements Cloneable {
             return targetPoint;
         }
 
+        /**
+         * rotates the camera
+         * @param degrees the angle of rotation
+         * @return the object for method stacking
+         */
         public Builder rotateCamera(int degrees) {
             if (camera.to == null) {
                 throw new IllegalStateException("Camera 'to' vector must be set before rotating");
@@ -404,6 +409,9 @@ public class Camera implements Cloneable {
     public Camera renderImage() {
         for (int i=0; i<this.nX; i++) {
             for (int j=0; j<this.nY; j++) {
+                if (i == nX/2 && j == nY / 2) {
+                    System.out.println("f");
+                }
                 castRay(j, i);
             }
         }
