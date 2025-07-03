@@ -22,6 +22,7 @@ public class SimpleRayTracer extends RayTracerBase {
     private static final int MAX_CALC_COLOR_LEVEL = 10;
     private static final double MIN_CALC_COLOR_K = 0.001;
     private static final Double3 INITIAL_K = Double3.ONE;
+    private static final int numberOfRays = 64;
 
     /**
      * Constructs a new SimpleRayTracer using the provided scene.
@@ -56,11 +57,11 @@ public class SimpleRayTracer extends RayTracerBase {
      * @return the resulting color
      */
     private Color calcColor(Intersection intersection, Ray ray) {
+        if (intersection == null) {
+            return scene.background;
+        }
         if (!preprocessIntersection(intersection, ray.getDirection())) {
             return Color.BLACK;
-        }
-        if (intersection.geometry instanceof Polygon) {
-            System.out.println("s");
         }
         return calcColor(intersection, MAX_CALC_COLOR_LEVEL, INITIAL_K)
                 .add(scene.ambientLight.getIntensity().scale(intersection.material.kA));

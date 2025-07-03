@@ -6,6 +6,7 @@ import primitives.Ray;
 import primitives.Vector;
 import scene.Scene;
 
+import java.util.List;
 import java.util.MissingResourceException;
 
 import static primitives.Util.alignZero;
@@ -71,6 +72,9 @@ public class Camera implements Cloneable {
      * Number of pixels in height.
      */
     private int nY = 1;
+
+    private final int numOfRays = 16;
+    private final RayGrid rayGrid = new RayGrid(numOfRays);
 
     /**
      * Private constructor to enforce use of Builder.
@@ -409,9 +413,6 @@ public class Camera implements Cloneable {
     public Camera renderImage() {
         for (int i=0; i<this.nX; i++) {
             for (int j=0; j<this.nY; j++) {
-                if (i == nX/2 && j == nY / 2) {
-                    System.out.println("f");
-                }
                 castRay(j, i);
             }
         }
@@ -449,8 +450,53 @@ public class Camera implements Cloneable {
      * @param i row index
      */
     public void castRay(int j, int i) {
-        Ray ray = constructRay(nX, nY, j, i);
-        Color color = rayTracer.traceRay(ray);
-        imageWriter.writePixel(j, i, color);
+        List<Ray> rays = rayGrid.createPixelBeam(this, nX, nY, j, i);
+
+        Color totalColor = Color.BLACK;
+
+        // Trace each ray and accumulate colors
+        for (Ray ray : rays) {
+            Color rayColor = rayTracer.traceRay(ray);
+            totalColor = totalColor.add(rayColor);
+        }
+
+        // Average the colors
+        Color finalColor = totalColor.reduce(rays.size());
+        imageWriter.writePixel(j, i, finalColor);
+    }
+
+    // Modified Camera class methods (add these to your Camera class)
+    /**
+     * Constructs a ray from the camera through a specific sub-pixel position
+     * @param nX Total number of columns (pixels) in view plane
+     * @param nY Total number of rows (pixels) in view plane
+     * @param j Column index of the pixel
+     * @param i Row index of the pixel
+     * @param offsetX Sub-pixel offset in X direction (-0.5 to 0.5)
+     * @param offsetY Sub-pixel offset in Y direction (-0.5 to 0.5)
+     * @return Ray from camera through the specified sub-pixel position
+     */
+    public Ray constructRay(int nX, int nY, int j, int i, double offsetX, double offsetY) {
+        // Center of the view plane
+        Point Pc = location.add(to.scale(distance));
+
+        // Calculate pixel dimensions
+        double pixelWidth = width / nX;
+        double pixelHeight = height / nY;
+
+        // Calculate base pixel position
+        double xj = (j - (nX - 1) / 2.0) * pixelWidth;
+        double yi = -(i - (nY - 1) / 2.0) * pixelHeight;
+
+        // Add sub-pixel offset
+        xj += offsetX * pixelWidth;
+        yi += offsetY * pixelHeight;
+
+        // Calculate the point on the view plane
+        Point Pij = Pc;
+        if (!isZero(xj)) Pij = Pij.add(right.scale(xj));
+        if (!isZero(yi)) Pij = Pij.add(up.scale(yi));
+
+        return new Ray(location, Pij.subtract(location));
     }
 }

@@ -147,7 +147,7 @@ public class HouseTest {
                 .writeToImage("House moved");
 
         cameraBuilder
-                .rotateCamera(70)
+                .rotateCamera(190)
                 .build()
                 .renderImage()
                 .writeToImage("House rotated");
