@@ -33,6 +33,7 @@ public class HouseTest {
      */
     @Test
     void house() {
+        Point moonCenter = new Point(700,700,250);
         scene.geometries.add(
                 new Plane(Point.ZERO, Vector.AXIS_Y)
                         .setMaterial(new Material().setKD(0.5).setKS(0.5).setKa(0.5).setKT(0).setKR(0))
@@ -66,15 +67,7 @@ public class HouseTest {
                         new Point(200, 200, -300)
                 ).setEmission(new Color(160, 82, 45))
                         .setMaterial(new Material().setKD(0.5).setKS(0.5).setKT(0).setKR(0)),
-                /*
-                new Polygon(
-                        new Point(-200, 0, 300),
-                        new Point(-200, 0, -300),
-                        new Point(-200, 200, -300),
-                        new Point(-200, 200, 300)
-                ).setEmission(new Color(160, 82, 45))
-                        .setMaterial(new Material().setKD(0.5).setKS(0.5).setKT(0).setKR(0)),*/
-                // קיר תחתון (מתחת לחלון)
+
                 // קיר תחתון (מתחת לחלון)
                 new Polygon(
                         new Point(-200, 0, 300),
@@ -117,7 +110,7 @@ public class HouseTest {
                         new Point(-200, 150, 100),
                         new Point(-200, 50, 100)
                 ) // צבע שונה - כחול פלדה (Steel Blue)
-                        .setMaterial(new Material().setKD(0.5).setKS(0.5).setKT(0.7).setKR(0)),
+                        .setMaterial(new Material().setKD(0.5).setKS(0.5).setKT(1).setKR(0).setBlurriness(1)),
 
 
 
@@ -160,51 +153,14 @@ public class HouseTest {
                         .setMaterial(new Material().setKD(0.5).setKS(0.5).setKT(0).setKR(0)),
 
                 new Sphere(
-                        new Point(700,700,250),100
-                ).setEmission(new Color(255, 255, 255))
+                        moonCenter,100
+                ).setEmission(new Color(WHITE))
                         .setMaterial(new Material().setKD(1).setKS(0.5).setKT(0)),
 
                 new Sphere(
                         new Point(635,700,250),100
-                ).setEmission(new Color(0, 0, 0))
+                ).setEmission(Color.BLACK)
                         .setMaterial(new Material().setKD(0).setKS(0).setKT(0)),
-
-                new Sphere(
-                        new Point(-500,450,200),1)
-                        .setEmission(new Color(255,255,255))
-                        .setMaterial(new Material().setKD(0.5).setKS(0.5).setKT(0)),
-                new Sphere(
-                        new Point(-400,450,250),1)
-                        .setEmission(new Color(255,255,255))
-                        .setMaterial(new Material().setKD(0.5).setKS(0.5).setKT(0)),
-                new Sphere(
-                        new Point(-300,450,300),1)
-                        .setEmission(new Color(255,255,255))
-                        .setMaterial(new Material().setKD(0.5).setKS(0.5).setKT(0)),
-                new Sphere(
-                        new Point(-200,450,400),1)
-                        .setEmission(new Color(255,255,255))
-                        .setMaterial(new Material().setKD(0.5).setKS(0.5).setKT(0)),
-                new Sphere(
-                        new Point(-500,400,200),1)
-                        .setEmission(new Color(255,255,255))
-                        .setMaterial(new Material().setKD(0.5).setKS(0.5).setKT(0)),
-                new Sphere(
-                        new Point(-400,400,200),1)
-                        .setEmission(new Color(255,255,255))
-                        .setMaterial(new Material().setKD(0.5).setKS(0.5).setKT(0)),
-                new Sphere(
-                        new Point(-300,400,200),1)
-                        .setEmission(new Color(255,255,255))
-                        .setMaterial(new Material().setKD(0.5).setKS(0.5).setKT(0)),
-                new Sphere(
-                        new Point(-200,400,200),1)
-                        .setEmission(new Color(255,255,255))
-                        .setMaterial(new Material().setKD(0.5).setKS(0.5).setKT(0)),
-                new Sphere(
-                        new Point(-100,400,200),1)
-                        .setEmission(new Color(255,255,255))
-                        .setMaterial(new Material().setKD(0.5).setKS(0.5).setKT(0)),
 
                 new Polygon(
                         new Point(600, 0, 200),
@@ -284,7 +240,7 @@ public class HouseTest {
 
         Random rand = new Random();
         List<Sphere> stars = new ArrayList<>();
-        int numStars = 1;
+        int numStars = 60;
 
         for (int i = 0; i < numStars; i++) {
             double x = -788 + rand.nextDouble() * 1200;
@@ -312,7 +268,7 @@ public class HouseTest {
 
                 new DirectionalLight(
                         new Color(WHITE).reduce(10),
-                       Vector.AXIS_Y.scale(-1).add(Vector.AXIS_Z).add(Vector.AXIS_X)
+                       Point.ZERO.subtract(moonCenter)
                 )
         ));
 
