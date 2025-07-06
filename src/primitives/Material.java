@@ -47,6 +47,29 @@ public class Material {
      */
     public Double3 kR = Double3.ZERO;
 
+    // Add these fields to your existing Material class
+    public double glossiness = 0.0;  // 0 = perfect mirror, 1 = completely rough
+    public double blurriness = 0.0;  // 0 = perfect glass, 1 = completely blurred
+
+    // Add these methods to your Material class
+    public Material setGlossiness(double glossiness) {
+        this.glossiness = glossiness;
+        return this;
+    }
+
+    public Material setBlurriness(double blurriness) {
+        this.blurriness = blurriness;
+        return this;
+    }
+
+    public boolean isGlossy() {
+        return glossiness > 0;
+    }
+
+    public boolean isBlurry() {
+        return blurriness > 0;
+    }
+
     public Material setKT(Double3 kT) {
         this.kT = kT;
         return this;

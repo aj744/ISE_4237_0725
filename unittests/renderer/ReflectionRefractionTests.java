@@ -32,7 +32,8 @@ class ReflectionRefractionTests {
    void twoSpheres() {
       scene.geometries.add( //
                            new Sphere(new Point(0, 0, -50), 50d).setEmission(new Color(BLUE)) //
-                              .setMaterial(new Material().setKD(0.4).setKS(0.3).setShininess(100).setKT(0.3)), //
+                              .setMaterial(new Material().setKD(0.4).setKS(0.3).setShininess(100).setKT(0.3)
+                                      .setBlurriness(0.8)), //
                            new Sphere(new Point(0, 0, -50), 25d).setEmission(new Color(RED)) //
                               .setMaterial(new Material().setKD(0.5).setKS(0.5).setShininess(100))); //
       scene.lights.add( //

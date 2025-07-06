@@ -8,6 +8,7 @@ import primitives.*;
 import scene.Scene;
 
 import java.util.List;
+import java.util.Random;
 
 import static primitives.Util.alignZero;
 import static primitives.Util.isZero;
@@ -22,7 +23,12 @@ public class SimpleRayTracer extends RayTracerBase {
     private static final int MAX_CALC_COLOR_LEVEL = 10;
     private static final double MIN_CALC_COLOR_K = 0.001;
     private static final Double3 INITIAL_K = Double3.ONE;
-    private static final int numberOfRays = 64;
+    private static final int GLOSSY_RAYS = 16;     // Number of rays for glossy reflections
+    private static final int BLURRY_RAYS = 16;     // Number of rays for blurry refractions
+    private static final double GLOSSY_RADIUS = 0.1;  // Radius for glossy effect
+    private static final double BLURRY_RADIUS = 1.5;  // Radius for blurry effect
+
+    private final Random random = new Random();
 
     /**
      * Constructs a new SimpleRayTracer using the provided scene.
@@ -188,18 +194,77 @@ public class SimpleRayTracer extends RayTracerBase {
     }
 
     private Color calcGlobalEffects(Intersection intersection, int level, Double3 k) {
-        return calcColorGlobalEffect(constructRefractedRay(intersection),
-                level, k, intersection.material.kT)
-                .add(calcColorGlobalEffect(constructReflectedRay(intersection),
-                        level, k, intersection.material.kR));
+        Color refractedColor = calcBlurryRefraction(intersection, level, k, intersection.material.kT);
+        Color reflectedColor = calcGlossyReflection(intersection, level, k, intersection.material.kR);
+        return refractedColor.add(reflectedColor);
     }
-    private Color calcColorGlobalEffect(Ray ray, int level, Double3 k, Double3 kx) {
-        Double3 kkx = k.product(kx);
-        if (kkx.lowerThan(MIN_CALC_COLOR_K)) return Color.BLACK;
-        Intersection intersection = findClosestIntersection(ray);
-        if (intersection == null) return scene.background.scale(kx);
-        return preprocessIntersection(intersection, ray.getDirection())
-                ? calcColor(intersection, level - 1, kkx).scale(kx) : Color.BLACK;
+
+    private Color calcGlossyReflection(Intersection intersection, int level, Double3 k, Double3 kR) {
+        Double3 kkR = k.product(kR);
+        if (kkR.lowerThan(MIN_CALC_COLOR_K)) return Color.BLACK;
+
+        Vector baseReflection = intersection.v.add(intersection.normal.scale(intersection.vNormal * -2));
+
+        if (!intersection.material.isGlossy()) {
+            // Regular reflection
+            Ray reflectedRay = new Ray(intersection.point, baseReflection, intersection.normal);
+            Intersection reflectedIntersection = findClosestIntersection(reflectedRay);
+            if (reflectedIntersection == null) return scene.background.scale(kR);
+            return preprocessIntersection(reflectedIntersection, reflectedRay.getDirection())
+                    ? calcColor(reflectedIntersection, level - 1, kkR).scale(kR) : Color.BLACK;
+        }
+
+        // Glossy reflection
+        Color totalColor = Color.BLACK;
+        double glossyRadius = intersection.material.glossiness * GLOSSY_RADIUS;
+
+        for (int i = 0; i < GLOSSY_RAYS; i++) {
+            Vector glossyDirection = generateRandomDirection(baseReflection, intersection.normal, glossyRadius);
+            Ray glossyRay = new Ray(intersection.point, glossyDirection, intersection.normal);
+
+            Intersection glossyIntersection = findClosestIntersection(glossyRay);
+            if (glossyIntersection != null && preprocessIntersection(glossyIntersection, glossyRay.getDirection())) {
+                totalColor = totalColor.add(calcColor(glossyIntersection, level - 1, kkR));
+            } else {
+                totalColor = totalColor.add(scene.background);
+            }
+        }
+
+        return totalColor.scale(kR).reduce(GLOSSY_RAYS);
+    }
+
+    private Color calcBlurryRefraction(Intersection intersection, int level, Double3 k, Double3 kT) {
+        Double3 kkT = k.product(kT);
+        if (kkT.lowerThan(MIN_CALC_COLOR_K)) return Color.BLACK;
+
+        Vector baseRefraction = intersection.v;
+
+        if (!intersection.material.isBlurry()) {
+            // Regular refraction
+            Ray refractedRay = new Ray(intersection.point, baseRefraction, intersection.normal);
+            Intersection refractedIntersection = findClosestIntersection(refractedRay);
+            if (refractedIntersection == null) return scene.background.scale(kT);
+            return preprocessIntersection(refractedIntersection, refractedRay.getDirection())
+                    ? calcColor(refractedIntersection, level - 1, kkT).scale(kT) : Color.BLACK;
+        }
+
+        // Blurry refraction
+        Color totalColor = Color.BLACK;
+        double blurryRadius = intersection.material.blurriness * BLURRY_RADIUS;
+
+        for (int i = 0; i < BLURRY_RAYS; i++) {
+            Vector blurryDirection = generateRandomDirection(baseRefraction, intersection.normal, blurryRadius);
+            Ray blurryRay = new Ray(intersection.point, blurryDirection, intersection.normal);
+
+            Intersection blurryIntersection = findClosestIntersection(blurryRay);
+            if (blurryIntersection != null && preprocessIntersection(blurryIntersection, blurryRay.getDirection())) {
+                totalColor = totalColor.add(calcColor(blurryIntersection, level - 1, kkT));
+            } else {
+                totalColor = totalColor.add(scene.background);
+            }
+        }
+
+        return totalColor.scale(kT).reduce(BLURRY_RAYS);
     }
 
     private Intersection findClosestIntersection(Ray ray) {
@@ -227,5 +292,40 @@ public class SimpleRayTracer extends RayTracerBase {
             ktr = ktr.product(i.material.kT);
         }
         return ktr;
+    }
+
+    /**
+     * Generates a random vector within a hemisphere around the given direction.
+     */
+    private Vector generateRandomDirection(Vector direction, Vector normal, double radius) {
+        if (radius <= 0) {
+            return direction;
+        }
+
+        // Create orthonormal basis
+        Vector u, v;
+        if (Math.abs(normal.dotProduct(Vector.AXIS_X)) > 0.9) {
+            u = normal.crossProduct(new Vector(0, 1, 0)).normalize();
+        } else {
+            u = normal.crossProduct(new Vector(1, 0, 0)).normalize();
+        }
+        v = normal.crossProduct(u);
+
+        // Generate random point in unit disk
+        double r = Math.sqrt(random.nextDouble()) * radius;
+        double theta = random.nextDouble() * 2 * Math.PI;
+        double offsetU = r * Math.cos(theta);
+        double offsetV = r * Math.sin(theta);
+
+        // Perturb the direction
+        Vector perturbedDirection = direction;
+        if (offsetU != 0) perturbedDirection = perturbedDirection.add(u.scale(offsetU));
+        if (offsetV != 0) perturbedDirection = perturbedDirection.add(v.scale(offsetV));
+
+        try {
+            return perturbedDirection.normalize();
+        } catch (Exception e) {
+            return direction;
+        }
     }
 }

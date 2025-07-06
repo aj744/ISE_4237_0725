@@ -73,7 +73,7 @@ public class Camera implements Cloneable {
      */
     private int nY = 1;
 
-    private final int numOfRays = 16;
+    private final int numOfRays = 36;
     private final RayGrid rayGrid = new RayGrid(numOfRays);
 
     /**
