@@ -6,6 +6,7 @@ import primitives.Ray;
 import primitives.Vector;
 import scene.Scene;
 
+import java.util.List;
 import java.util.MissingResourceException;
 
 import static primitives.Util.alignZero;
@@ -72,6 +73,9 @@ public class Camera implements Cloneable {
      */
     private int nY = 1;
 
+    private final int numOfRays = 16;
+    private final RayGrid rayGrid = new RayGrid(numOfRays);
+
     /**
      * Private constructor to enforce use of Builder.
      */
@@ -82,6 +86,107 @@ public class Camera implements Cloneable {
      */
     public static class Builder {
         final Camera camera = new Camera();
+
+        /**
+         * Point that the camera is currently targeting/looking at.
+         * Used to maintain focus when moving the camera.
+         */
+        private Point targetPoint;
+
+        /**
+         * Moves the camera by the specified displacement vector while keeping it focused
+         * on the same target point it was previously looking at.
+         *
+         * @param displacement Vector specifying how much to move the camera location
+         * @return this Builder instance (for method chaining)
+         * @throws IllegalStateException if camera location or target point is not set
+         */
+        public Builder moveCamera(Vector displacement) {
+            if (camera.location == null) {
+                throw new IllegalStateException("Camera location must be set before moving");
+            }
+            if (targetPoint == null) {
+                throw new IllegalStateException("Target point must be set before moving camera");
+            }
+
+            // Move the camera location
+            camera.location = camera.location.add(displacement);
+
+            // Recalculate direction vectors to keep looking at the same target point
+            camera.to = targetPoint.subtract(camera.location).normalize();
+
+            // Preserve the current up vector if it exists, otherwise use global Y-axis
+            Vector currentUp = (camera.up != null) ? camera.up : Vector.AXIS_Y;
+
+            // Recalculate right and up vectors to maintain proper orthogonal orientation
+            camera.right = camera.to.crossProduct(currentUp).normalize();
+            camera.up = camera.right.crossProduct(camera.to).normalize();
+
+            return this;
+        }
+
+        /**
+         * Sets the target point that the camera should look at.
+         * This point will be preserved when moving the camera.
+         *
+         * @param target The point the camera should focus on
+         * @return this Builder instance (for method chaining)
+         */
+        public Builder setTargetPoint(Point target) {
+            this.targetPoint = target;
+            return this;
+        }
+
+        /**
+         * Gets the current target point.
+         *
+         * @return the target point, or null if not set
+         */
+        public Point getTargetPoint() {
+            return targetPoint;
+        }
+
+        /**
+         * rotates the camera
+         * @param degrees the angle of rotation
+         * @return the object for method stacking
+         */
+        public Builder rotateCamera(int degrees) {
+            if (camera.to == null) {
+                throw new IllegalStateException("Camera 'to' vector must be set before rotating");
+            }
+            if (camera.up == null) {
+                throw new IllegalStateException("Camera 'up' vector must be set before rotating");
+            }
+            if (camera.right == null) {
+                throw new IllegalStateException("Camera 'right' vector must be set before rotating");
+            }
+
+            // Convert degrees to radians
+            double radians = Math.toRadians(degrees);
+            double cosTheta = Math.cos(radians);
+            double sinTheta = Math.sin(radians);
+
+            // Store current up and right vectors
+            Vector currentUp = camera.up;
+            Vector currentRight = camera.right;
+
+            // Simple 2D rotation in the plane perpendicular to "to" vector
+            // Since up and right are orthogonal and both perpendicular to "to",
+            // we can treat this as a 2D rotation in the up-right plane
+
+            // new_up = up*cos(θ) - right*sin(θ)
+            // new_right = up*sin(θ) + right*cos(θ)
+
+            Vector newUp = currentUp.scale(cosTheta).add(currentRight.scale(-sinTheta));
+            Vector newRight = currentUp.scale(sinTheta).add(currentRight.scale(cosTheta));
+
+            // Normalize to ensure unit vectors (should already be unit, but ensure precision)
+            camera.up = newUp.normalize();
+            camera.right = newRight.normalize();
+
+            return this;
+        }
 
         /**
          * Sets the camera's location in space.
@@ -122,6 +227,8 @@ public class Camera implements Cloneable {
             camera.to = to.normalize();
             camera.right = to.crossProduct(up).normalize();
             camera.up = camera.right.crossProduct(camera.to).normalize();
+
+            targetPoint = target;
             return this;
         }
 
@@ -136,6 +243,8 @@ public class Camera implements Cloneable {
             camera.up = Vector.AXIS_Y;
             camera.right = camera.to.crossProduct(camera.up).normalize();
             camera.up = camera.right.crossProduct(camera.to).normalize();
+
+            targetPoint = target;
             return this;
         }
 
@@ -341,8 +450,53 @@ public class Camera implements Cloneable {
      * @param i row index
      */
     public void castRay(int j, int i) {
-        Ray ray = constructRay(nX, nY, j, i);
-        Color color = rayTracer.traceRay(ray);
-        imageWriter.writePixel(j, i, color);
+        List<Ray> rays = rayGrid.createPixelBeam(this, nX, nY, j, i);
+
+        Color totalColor = Color.BLACK;
+
+        // Trace each ray and accumulate colors
+        for (Ray ray : rays) {
+            Color rayColor = rayTracer.traceRay(ray);
+            totalColor = totalColor.add(rayColor);
+        }
+
+        // Average the colors
+        Color finalColor = totalColor.reduce(rays.size());
+        imageWriter.writePixel(j, i, finalColor);
+    }
+
+    // Modified Camera class methods (add these to your Camera class)
+    /**
+     * Constructs a ray from the camera through a specific sub-pixel position
+     * @param nX Total number of columns (pixels) in view plane
+     * @param nY Total number of rows (pixels) in view plane
+     * @param j Column index of the pixel
+     * @param i Row index of the pixel
+     * @param offsetX Sub-pixel offset in X direction (-0.5 to 0.5)
+     * @param offsetY Sub-pixel offset in Y direction (-0.5 to 0.5)
+     * @return Ray from camera through the specified sub-pixel position
+     */
+    public Ray constructRay(int nX, int nY, int j, int i, double offsetX, double offsetY) {
+        // Center of the view plane
+        Point Pc = location.add(to.scale(distance));
+
+        // Calculate pixel dimensions
+        double pixelWidth = width / nX;
+        double pixelHeight = height / nY;
+
+        // Calculate base pixel position
+        double xj = (j - (nX - 1) / 2.0) * pixelWidth;
+        double yi = -(i - (nY - 1) / 2.0) * pixelHeight;
+
+        // Add sub-pixel offset
+        xj += offsetX * pixelWidth;
+        yi += offsetY * pixelHeight;
+
+        // Calculate the point on the view plane
+        Point Pij = Pc;
+        if (!isZero(xj)) Pij = Pij.add(right.scale(xj));
+        if (!isZero(yi)) Pij = Pij.add(up.scale(yi));
+
+        return new Ray(location, Pij.subtract(location));
     }
 }

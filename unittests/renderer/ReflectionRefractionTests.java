@@ -9,6 +9,8 @@ import lighting.*;
 import primitives.*;
 import scene.Scene;
 
+import java.util.List;
+
 /**
  * Tests for reflection and transparency functionality, test for partial
  * shadows
@@ -70,9 +72,9 @@ class ReflectionRefractionTests {
 
       cameraBuilder
          .setLocation(new Point(0, 0, 10000)) //
-         .setDirection(Point.ZERO, Vector.AXIS_Y) //
+         .setDirection(Point.ZERO, Vector.AXIS_Y)   //
          .setVpDistance(10000).setVpSize(2500, 2500) //
-         .setResolution(500, 500) //
+         .setResolution(500, 500)
          .build() //
          .renderImage() //
          .writeToImage("reflectionTwoSpheresMirrored");
