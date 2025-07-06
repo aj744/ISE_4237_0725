@@ -92,4 +92,25 @@ public class Point {
     public double distance(Point point) {
         return Math.sqrt(distanceSquared(point)); // Distance is the square root of the squared distance
     }
+
+    public double getX() {
+        return this.xyz.d1();
+    }
+
+    public double getY() {
+        return this.xyz.d2();
+    }
+
+    public double getZ() {
+        return this.xyz.d3();
+    }
+
+    public double getComponent(int i) {
+        return switch (i) {
+            case 0 -> getX();
+            case 1 -> getY();
+            case 2 -> getZ();
+            default -> throw new IllegalArgumentException("parameter must be 0/1/2");
+        };
+    }
 }

@@ -38,6 +38,7 @@ public class Plane extends Geometry {
     public Plane(Point point, Vector normal) {
         this.point = point;
         this.normal = normal.normalize();
+        this.boundingBox = null;
     }
 
     /**
@@ -53,6 +54,7 @@ public class Plane extends Geometry {
     public Plane(Point p1, Point p2, Point p3) {
         this.normal = p2.subtract(p1).crossProduct(p2.subtract(p3)).normalize(); // Compute normal vector
         this.point = p2; // Any point on the plane is valid
+        this.boundingBox = null;
     }
 
     /**

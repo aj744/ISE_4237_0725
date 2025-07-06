@@ -17,8 +17,7 @@ import java.util.Random;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import static java.awt.Color.BLACK;
-import static java.awt.Color.WHITE;
+import static java.awt.Color.*;
 
 public class HouseTest {
     Scene scene = new Scene("House")
@@ -220,17 +219,32 @@ public class HouseTest {
                         new Point(650, 550, 150),
                         new Point(750, 200, 50)
                 ).setEmission(new Color(34, 139, 34))
-                        .setMaterial(new Material().setKD(0.5).setKT(0.5).setKT(0))
+                        .setMaterial(new Material().setKD(0.5).setKT(0.5).setKT(0)),
 
+                new Polygon(
+                        new Point(40, 1, 301),
+                        new Point(-40, 1, 301),
+                        new Point(-40, 1, 800),
+                        new Point(40, 1, 800)
+                ).setEmission(new Color(250, 180, 130))
+                        .setMaterial(new Material().setKD(0.5).setKT(0.5).setKT(0)),
 
+                new Sphere(
+                    new Point(70, 20, 400),
+                        20
+                ).setEmission(Color.BLACK).setMaterial(new Material().setKD(0.5).setKT(0.5).setKT(0.3)),
+                new Sphere(
+                        new Point(-70, 20, 400),
+                        20
+                ).setEmission(Color.BLACK).setMaterial(new Material().setKD(0.5).setKT(0.5).setKT(0.3))
                 );
         final Random random = new Random();
-        for (int i=0; i<0; i++) {
+        for (int i=0; i<500; i++) {
             var x = random.nextBoolean() ? 800 * random.nextDouble() : -800 * random.nextDouble();
             var z = random.nextBoolean() ? 800 * random.nextDouble() : -800 * random.nextDouble();
             Point p1 = new Point(x, 0, z);
-            Point p2 = new Point(x+8, 0, z);
-            Point p3 = new Point(x+4, 30, z);
+            Point p2 = new Point(x+6, 0, z);
+            Point p3 = new Point(x+3, 30, z);
 
             scene.addGeometry(new Triangle(p1, p2, p3)
                     .setEmission(new Color(144, 238, 144))
@@ -261,7 +275,7 @@ public class HouseTest {
                 ).setKl(0.0001).setKq(0.0001),
 
                 new SpotLight(
-                        new Color(245, 222, 179),
+                        new Color(120, 111, 90),
                         new Point(0, 170, 308),
                         Vector.AXIS_Y.scale(-1)
                 ),
@@ -269,7 +283,17 @@ public class HouseTest {
                 new DirectionalLight(
                         new Color(WHITE).reduce(10),
                        Point.ZERO.subtract(moonCenter)
-                )
+                ),
+
+                new PointLight(
+                        new Color(YELLOW),
+                        new Point(70, 20, 400)
+                ).setKl(0.0001).setKq(0.0001),
+
+                new PointLight(
+                        new Color(YELLOW),
+                        new Point(-70, 20, 400)
+                ).setKl(0.0001).setKq(0.0001)
         ));
 
         cameraBuilder
@@ -277,8 +301,10 @@ public class HouseTest {
                 .setDirection(Point.ZERO)
                 .setVpDistance(100).setVpSize(200, 200)
                 .setResolution(600, 600)
+                .setMultithreading(5)
                 .build()
                 .renderImage()
                 .writeToImage("House");
+        // 16:35
     }
 }

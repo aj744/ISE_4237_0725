@@ -2,6 +2,8 @@ package geometries;
 
 import java.util.List;
 import static primitives.Util.*;
+
+import primitives.BoundingBox;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
@@ -86,6 +88,30 @@ public class Polygon extends Geometry {
             if (positive != (edge1.crossProduct(edge2).dotProduct(n) > 0))
                 throw new IllegalArgumentException("All vertices must be ordered and the polygon must be convex");
         }
+        double minX = vertices[0].getX();
+        double minY = vertices[0].getY();
+        double minZ = vertices[0].getZ();
+        double maxX = minX;
+        double maxY = minY;
+        double maxZ = minZ;
+
+        for (int i = 1; i < vertices.length; i++) {
+            double x = vertices[i].getX();
+            double y = vertices[i].getY();
+            double z = vertices[i].getZ();
+
+            if (x < minX) minX = x;
+            if (y < minY) minY = y;
+            if (z < minZ) minZ = z;
+            if (x > maxX) maxX = x;
+            if (y > maxY) maxY = y;
+            if (z > maxZ) maxZ = z;
+        }
+
+        Point min = new Point(minX, minY, minZ);
+        Point max = new Point(maxX, maxY, maxZ);
+
+        this.boundingBox = new BoundingBox(min, max);
     }
 
     /**

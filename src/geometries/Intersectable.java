@@ -1,10 +1,7 @@
 package geometries;
 
 import lighting.LightSource;
-import primitives.Material;
-import primitives.Point;
-import primitives.Ray;
-import primitives.Vector;
+import primitives.*;
 
 import java.util.List;
 import java.util.Objects;
@@ -17,6 +14,7 @@ import java.util.Objects;
  */
 public abstract class Intersectable {
 
+    protected BoundingBox boundingBox;
     /**
      * Represents a detailed intersection between a ray and a geometry.
      * <p>
@@ -130,4 +128,12 @@ public abstract class Intersectable {
      * @return a list of intersections, or {@code null} if none are found
      */
     protected abstract List<Intersection> calculateIntersectionsHelper(Ray ray, double maxDistance);
+
+    /**
+     * Gets the normal vector at a given point on the geometry.
+     * @return the normal vector at the intersection point
+     */
+    public BoundingBox getBoundingBox(){
+        return this.boundingBox;
+    }
 }

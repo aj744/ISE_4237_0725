@@ -6,8 +6,10 @@ import primitives.Ray;
 import primitives.Vector;
 import scene.Scene;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.MissingResourceException;
+import java.util.stream.IntStream;
 
 import static primitives.Util.alignZero;
 import static primitives.Util.isZero;
@@ -75,6 +77,11 @@ public class Camera implements Cloneable {
 
     private final int numOfRays = 36;
     private final RayGrid rayGrid = new RayGrid(numOfRays);
+
+    private int threadsCount = 0; // -2 auto, -1 range/stream, 0 no threads, 1+ number of threadsprivate
+    static final int SPARE_THREADS = 2; // Spare threads if trying to use all the coresprivate
+    double printInterval = 0; // printing progress percentage interval (0 – no printing)
+    private PixelManager pixelManager; // pixel manager object
 
     /**
      * Private constructor to enforce use of Builder.
@@ -305,6 +312,20 @@ public class Camera implements Cloneable {
             return this;
         }
 
+        public Builder setMultithreading(int threads) {
+            if (threads < -2) throw new IllegalArgumentException("Multithreading must be -2 or higher");if (threads >= -1) camera.threadsCount = threads;
+            else { // == -2
+                int cores = Runtime.getRuntime().availableProcessors() - SPARE_THREADS;
+                camera.threadsCount = cores <= 2 ? 1 : cores;
+            }
+            return this;
+        }
+        public Builder setDebugPrint(double interval) {
+            if (interval < 0) throw new IllegalArgumentException("Interval value must be non-negative");
+            camera.printInterval = interval;
+            return this;
+        }
+
         /**
          * Builds and returns the configured {@link Camera} instance.
          * @return A cloned Camera object.
@@ -410,12 +431,56 @@ public class Camera implements Cloneable {
      * Renders the image by casting rays through each pixel.
      * @return this Camera instance
      */
-    public Camera renderImage() {
+    public Camera renderImageNoThreads() {
         for (int i=0; i<this.nX; i++) {
             for (int j=0; j<this.nY; j++) {
                 castRay(j, i);
             }
         }
+        return this;
+    }
+
+    /** ...
+     */
+    private void castRay() {
+// your existing code...
+        pixelManager.pixelDone();
+    }
+    /** ...
+     */
+    public Camera renderImage() {
+        pixelManager = new PixelManager(nY, nX, printInterval);
+        return switch (threadsCount) {
+            case 0 -> renderImageNoThreads();
+            case -1 -> renderImageStream();
+            default -> renderImageRawThreads();
+        };
+    }
+
+    /**
+     * Render image using multi-threading by creating and running raw threads* @return the camera object itself
+     */
+    private Camera renderImageRawThreads() {
+        var threads = new LinkedList<Thread>();
+        while (threadsCount-- > 0)
+            threads.add(new Thread(() -> {
+                PixelManager.Pixel pixel;
+                while ((pixel = pixelManager.nextPixel()) != null)
+                    castRay(pixel.col(), pixel.row());
+            }));
+        for (var thread : threads) thread.start();
+        try {
+            for (var thread : threads) thread.join();
+        } catch (InterruptedException ignore) {}
+        return this;
+    }
+    /**
+     * Render image using multi-threading by creating and running raw threads* @return the camera object itself
+     */
+    public Camera renderImageStream() {
+        IntStream.range(0, nY).parallel() //
+                .forEach(i -> IntStream.range(0, nX).parallel() //
+                        .forEach(j -> castRay(j, i)));
         return this;
     }
 

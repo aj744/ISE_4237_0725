@@ -1,9 +1,6 @@
 package geometries;
 
-import primitives.Ray;
-import primitives.Point;
-import primitives.Util;
-import primitives.Vector;
+import primitives.*;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -32,6 +29,20 @@ public class Sphere extends RadialGeometry {
     public Sphere(Point center, double radius) {
         super(radius); // Call superclass constructor
         this.center = center;
+
+        Point min = new Point(
+                center.getX() - radius,
+                center.getY() - radius,
+                center.getZ() - radius
+        );
+
+        Point max = new Point(
+                center.getX() + radius,
+                center.getY() + radius,
+                center.getZ() + radius
+        );
+        
+        this.boundingBox = new BoundingBox(min, max);
     }
 
     /**
