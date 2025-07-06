@@ -20,7 +20,6 @@ public class SimpleRayTracer extends RayTracerBase {
     private static final int MAX_CALC_COLOR_LEVEL = 10;
     private static final double MIN_CALC_COLOR_K = 0.001;
     private static final Double3 INITIAL_K = Double3.ONE;
-
     /**
      * Constructs a new SimpleRayTracer using the provided scene.
      *
@@ -246,13 +245,15 @@ public class SimpleRayTracer extends RayTracerBase {
                 scene.geometries.calculateIntersections(lightRay, intersection.light.getDistance(intersection.point));
         if (intersections == null) return Double3.ONE;
 
-        Double3 ktr = Double3.ONE;
-        for (Intersection i : intersections) {
-            ktr = ktr.product(i.geometry.getMaterial().kT);
+        else {
+            Double3 ktr = Double3.ONE;
+            for (Intersection i : intersections) {
+                ktr = ktr.product(i.geometry.getMaterial().kT);
 
-            // If the intensity of the light ray is too small, the object is opaque
-            if (ktr.lowerThan(MIN_CALC_COLOR_K)) return Double3.ZERO;
+                // If the intensity of the light ray is too small, the object is opaque
+                if (ktr.lowerThan(MIN_CALC_COLOR_K)) return Double3.ZERO;
+            }
+            return ktr;
         }
-        return ktr;
     }
 }
