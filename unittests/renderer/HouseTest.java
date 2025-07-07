@@ -301,10 +301,12 @@ public class HouseTest {
                 .setDirection(Point.ZERO)
                 .setVpDistance(100).setVpSize(200, 200)
                 .setResolution(600, 600)
-                .setMultithreading(0)
+                .setMultithreading(8)
                 .build()
                 .renderImage()
                 .writeToImage("House");
-        // 16:35
+        // 41:24
+        // 20:07
+
     }
 }
