@@ -8,10 +8,15 @@ import java.util.List;
  * Represents a node in the Bounding Volume Hierarchy
  */
 public class BVHNode {
+    /** The bounding box*/
     private final BoundingBox boundingBox;
+    /** The node's left child */
     private final BVHNode leftChild;
+    /** The node's right child */
     private final BVHNode rightChild;
+    /** The node's geometries */
     private final List<Intersectable> geometries;
+    /** Is the node a leaf */
     private final boolean isLeaf;
 
     /**
@@ -42,43 +47,11 @@ public class BVHNode {
     }
 
     /**
-     * Gets the bounding box of this node
-     * @return bounding box
-     */
-    public BoundingBox getBoundingBox() {
-        return boundingBox;
-    }
-
-    /**
-     * Gets the left child node
-     * @return left child
-     */
-    public BVHNode getLeftChild() {
-        return leftChild;
-    }
-
-    /**
-     * Gets the right child node
-     * @return right child
-     */
-    public BVHNode getRightChild() {
-        return rightChild;
-    }
-
-    /**
      * Gets the geometries in this leaf node
      * @return list of geometries
      */
     public List<Intersectable> getGeometries() {
         return geometries;
-    }
-
-    /**
-     * Checks if this node is a leaf
-     * @return true if leaf node
-     */
-    public boolean isLeaf() {
-        return isLeaf;
     }
 
     /**

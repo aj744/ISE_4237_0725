@@ -112,17 +112,6 @@ public class BoundingBox {
     }
 
     /**
-     * Gets the surface area of the bounding box
-     * @return surface area
-     */
-    public double getSurfaceArea() {
-        double dx = max.getX() - min.getX();
-        double dy = max.getY() - min.getY();
-        double dz = max.getZ() - min.getZ();
-        return 2 * (dx * dy + dy * dz + dz * dx);
-    }
-
-    /**
      * Gets the centroid of the bounding box
      * @return centroid point
      */
@@ -132,43 +121,5 @@ public class BoundingBox {
                 (min.getY() + max.getY()) / 2,
                 (min.getZ() + max.getZ()) / 2
         );
-    }
-
-    /**
-     * Gets the extent of the bounding box along a specific axis
-     * @param axis 0 for X, 1 for Y, 2 for Z
-     * @return extent along the axis
-     */
-    public double getExtent(int axis) {
-        return max.getComponent(axis) - min.getComponent(axis);
-    }
-
-    /**
-     * Returns the center coordinate along a given axis.
-     * @param axis 0 for X, 1 for Y, 2 for Z
-     * @return the center value along the selected axis
-     */
-    public double getCenter(int axis) {
-        // Must be 0, 1, or 2
-        return switch (axis) {
-            case 0 -> (min.getX() + max.getX()) / 2.0;// X-axis
-            case 1 -> (min.getY() + max.getY()) / 2.0;// Y-axis
-            case 2 -> (min.getX() + max.getZ()) / 2.0;// Z-axis
-            default -> throw new IllegalArgumentException("Invalid axis: " + axis);// Must be 0, 1, or 2
-        };
-    }
-
-    /**
-     * Gets the longest axis of the bounding box
-     * @return 0 for X, 1 for Y, 2 for Z
-     */
-    public int getLongestAxis() {
-        double dx = getExtent(0);
-        double dy = getExtent(1);
-        double dz = getExtent(2);
-
-        if (dx >= dy && dx >= dz) return 0;
-        if (dy >= dz) return 1;
-        return 2;
     }
 }

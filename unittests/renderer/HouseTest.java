@@ -307,6 +307,7 @@ public class HouseTest {
                 .writeToImage("House");
         // 41:24
         // 20:07
-
+        // 03:37
+        // 00:54
     }
 }

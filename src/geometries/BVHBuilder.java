@@ -10,8 +10,8 @@ import java.util.*;
  */
 public class BVHBuilder {
     private BVHNode root;
-    private static final int MAX_PRIMITIVES_PER_LEAF = 4;
-    private static final int MAX_DEPTH = 20;
+    private static final int MAX_PRIMITIVES_PER_LEAF = 1;
+    private static final int MAX_DEPTH = 200;
 
     /**
      * Builds a BVH tree from a list of geometries
@@ -185,21 +185,5 @@ public class BVHBuilder {
         List<Intersectable.Intersection> intersections = new ArrayList<>();
         root.findIntersections(ray, maxDistance, intersections);
         return intersections.isEmpty() ? null : intersections;
-    }
-
-    /**
-     * Returns the root node of the BVH (for debugging/visualization)
-     * @return root BVHNode
-     */
-    public BVHNode getRoot() {
-        return root;
-    }
-
-    /**
-     * Checks if the BVH is built and ready
-     * @return true if BVH is built
-     */
-    public boolean isBuilt() {
-        return root != null;
     }
 }

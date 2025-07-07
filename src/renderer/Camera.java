@@ -75,7 +75,7 @@ public class Camera implements Cloneable {
      */
     private int nY = 1;
 
-    private final int numOfRays = 36;
+    private final int numOfRays = 289;
     private final RayGrid rayGrid = new RayGrid(numOfRays);
 
     private int threadsCount = 0; // -2 auto, -1 range/stream, 0 no threads, 1+ number of threadsprivate
@@ -313,7 +313,8 @@ public class Camera implements Cloneable {
         }
 
         public Builder setMultithreading(int threads) {
-            if (threads < -2) throw new IllegalArgumentException("Multithreading must be -2 or higher");if (threads >= -1) camera.threadsCount = threads;
+            if (threads < -2) throw new IllegalArgumentException("Multithreading must be -2 or higher");
+            if (threads >= -1) camera.threadsCount = threads;
             else { // == -2
                 int cores = Runtime.getRuntime().availableProcessors() - SPARE_THREADS;
                 camera.threadsCount = cores <= 2 ? 1 : cores;
