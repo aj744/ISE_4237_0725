@@ -254,7 +254,7 @@ public class HouseTest {
 
         Random rand = new Random();
         List<Sphere> stars = new ArrayList<>();
-        int numStars = 60;
+        int numStars = 200;
 
         for (int i = 0; i < numStars; i++) {
             double x = -788 + rand.nextDouble() * 1200;
@@ -301,7 +301,7 @@ public class HouseTest {
                 .setDirection(Point.ZERO)
                 .setVpDistance(100).setVpSize(200, 200)
                 .setResolution(600, 600)
-                .setMultithreading(5)
+                .setMultithreading(0)
                 .build()
                 .renderImage()
                 .writeToImage("House");
